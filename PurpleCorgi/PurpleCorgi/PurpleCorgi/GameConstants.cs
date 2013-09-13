@@ -17,8 +17,5 @@ namespace PurpleCorgi
         // MiniGame Resolution 
         public static int MiniGameCanvasWidth { get { return GameResolutionWidth / 2; } }
         public static int MiniGameCanvasHeight { get { return GameResolutionHeight / 2; } }
-
-        // Physics
-        public const float InGameGravity = 9.82f;
     }
 }

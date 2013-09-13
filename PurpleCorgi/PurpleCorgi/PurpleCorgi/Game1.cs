@@ -13,6 +13,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
+using Corgie;
 
 namespace PurpleCorgi
 {
@@ -57,7 +58,8 @@ namespace PurpleCorgi
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Kinect ein = new Kinect();
+            ein.Init();
 
             base.Initialize();
         }
@@ -129,7 +131,7 @@ namespace PurpleCorgi
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
       
             // render frames for each mini game
             for (int i = 0; i < 4; i++)
