@@ -108,9 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameConstants.cs" />
+    <Compile Include="MiniGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="TestMiniGame.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

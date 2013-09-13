@@ -27,11 +27,18 @@ namespace PurpleCorgi
         private static Texture2D whitePixel = null;
         public static Texture2D WhitePixel { get { return whitePixel; } }
 
-        private World w1;
+        private static Random rand = new Random();
+        public static Random GameRandom { get { return rand; } }
+
+        private RenderTarget2D testMiniGameCanvas;
+        private MiniGame testMiniGame;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
+            graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
             Content.RootDirectory = "Content";
         }
 
@@ -44,8 +51,6 @@ namespace PurpleCorgi
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
-            graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
             base.Initialize();
         }
@@ -62,7 +67,8 @@ namespace PurpleCorgi
             whitePixel = new Texture2D(GraphicsDevice, 1, 1);
             whitePixel.SetData(new[] { Color.White });
 
-            w1 = new World(new Vector2(0, GameConstants.InGameGravity));
+            testMiniGameCanvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+            testMiniGame = new TestMiniGame(GraphicsDevice);
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace PurpleCorgi
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            testMiniGame.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -96,9 +102,16 @@ namespace PurpleCorgi
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            // render mini-game
+            testMiniGame.Render(testMiniGameCanvas);
+            GraphicsDevice.SetRenderTarget(null);
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            // draw mini game to screen
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
+            spriteBatch.Draw(testMiniGameCanvas, Vector2.Zero, Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
