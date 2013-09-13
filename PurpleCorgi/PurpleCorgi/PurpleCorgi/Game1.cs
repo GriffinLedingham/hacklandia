@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using FarseerPhysics;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Factories;
+using Corgi;
 
 namespace PurpleCorgi
 {
@@ -18,6 +24,11 @@ namespace PurpleCorgi
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        private static Texture2D whitePixel = null;
+        public static Texture2D WhitePixel { get { return whitePixel; } }
+
+        private World w1;
 
         public Game1()
         {
@@ -47,7 +58,10 @@ namespace PurpleCorgi
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            whitePixel = new Texture2D(GraphicsDevice, 1, 1);
+            whitePixel.SetData(new[] { Color.White });
+
+            w1 = new World(new Vector2(0, 9.82f));
         }
 
         /// <summary>
