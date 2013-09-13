@@ -80,9 +80,18 @@ namespace PurpleCorgi
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
             {
-                miniGames[i] = new MiniGameContext();
-                miniGames[i].game = new TestMiniGame(GraphicsDevice);
-                miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                if (i == 0)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new PaddleMiniGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
+                else
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new TestMiniGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
             }
         }
 
@@ -120,7 +129,7 @@ namespace PurpleCorgi
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
       
             // render frames for each mini game
             for (int i = 0; i < 4; i++)

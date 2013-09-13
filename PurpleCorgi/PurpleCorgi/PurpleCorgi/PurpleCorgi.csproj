@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PaddleMiniGame.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="MiniGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
