@@ -58,8 +58,8 @@ namespace PurpleCorgi
         /// </summary>
         protected override void Initialize()
         {
-            Kinect ein = new Kinect();
-            ein.Init();
+            Kinect ein = new Kinect(100,100);
+            //ein.Init();
 
             base.Initialize();
         }
@@ -85,7 +85,7 @@ namespace PurpleCorgi
                 if (i == 1)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new TestMiniGriff(GraphicsDevice);
+                    miniGames[i].game = new PlatformerGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else

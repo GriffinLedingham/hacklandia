@@ -41,7 +41,6 @@ namespace PurpleCorgi
 
 
         Body body, rod_body, floor_body, fixpt_body;
-        Joint playerRod;
 
         public PlatformerGame(GraphicsDevice graphicsDevice)
         {
@@ -115,15 +114,13 @@ namespace PurpleCorgi
             Vector2 force1 = new Vector2(0, 0);
             float forcePower = 0f;
 
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A))
-                forcePower = -1f / 100f;//force1 += new Vector2(-forcePower, 0);
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D))
-                forcePower = 1f / 100f;//force1 += new Vector2(forcePower, 0);
-
-            floor_body.Rotation += (forcePower);
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Up))
+                force1 += new Vector2(0, -forcePower);
             //rod_body.ApplyForce(new Vector2(0, -4.7f));
             //rod_body.ApplyTorque(10.0f);
             //floor_body.ApplyForce(force1,new Vector2(floor_width/2,0));
+
+            body.ApplyForce(force1);
 
             world.Step((float)GameTime.ElapsedGameTime.TotalSeconds);
         }

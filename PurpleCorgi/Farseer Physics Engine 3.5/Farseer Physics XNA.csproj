@@ -76,6 +76,9 @@
     <DocumentationFile>bin\x86\Release\FarseerPhysics XNA.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Corgie">
+      <HintPath>..\..\..\corgi\Corgie\bin\Debug\Corgie.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib">
