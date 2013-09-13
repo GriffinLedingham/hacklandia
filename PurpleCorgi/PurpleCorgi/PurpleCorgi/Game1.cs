@@ -30,6 +30,7 @@ namespace PurpleCorgi
         private static Random rand = new Random();
         public static Random GameRandom { get { return rand; } }
 
+        private MiniGameContext[] miniGames;
         private RenderTarget2D testMiniGameCanvas;
         private MiniGame testMiniGame;
 
@@ -75,6 +76,14 @@ namespace PurpleCorgi
 
             testMiniGameCanvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
             testMiniGame = new TestMiniGame(GraphicsDevice);
+
+            miniGames = new MiniGameContext[4];
+            for (int i = 0; i < 4; i++)
+            {
+                miniGames[i] = new MiniGameContext();
+                miniGames[i].game = new TestMiniGame(GraphicsDevice);
+                miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+            }
         }
 
         /// <summary>
@@ -97,7 +106,10 @@ namespace PurpleCorgi
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            testMiniGame.Update(gameTime);
+            for (int i = 0; i < 4; i++)
+            {
+                miniGames[i].game.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -108,15 +120,21 @@ namespace PurpleCorgi
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            // render mini-game
-            testMiniGame.Render(testMiniGameCanvas);
-            GraphicsDevice.SetRenderTarget(null);
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
+      
+            // render frames for each mini game
+            for (int i = 0; i < 4; i++)
+            {
+                miniGames[i].game.Render(miniGames[i].canvas);
+            }
 
-            // draw mini game to screen
+            // render mini games to screen
+            GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
-            spriteBatch.Draw(testMiniGameCanvas, Vector2.Zero, Color.White);
+            for (int i = 0; i < 4; i++)
+            {
+                spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
