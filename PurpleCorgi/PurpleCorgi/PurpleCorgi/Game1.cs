@@ -80,9 +80,18 @@ namespace PurpleCorgi
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
             {
-                miniGames[i] = new MiniGameContext();
-                miniGames[i].game = new TestMiniGame(GraphicsDevice);
-                miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                if (i == 1)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new TestMiniGriff(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
+                else
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new TestMiniGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
             }
         }
 
