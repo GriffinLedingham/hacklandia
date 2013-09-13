@@ -42,5 +42,11 @@ namespace PurpleCorgi
         /// </summary>
         /// <param name="sb">Canvas to write to.</param>
         void Render(RenderTarget2D canvas);
+
+        /// <summary>
+        /// Obtains the current state of the MiniGame
+        /// </summary>
+        /// <returns>A MiniGameState representing the current state of the MiniGame</returns>
+        MiniGameState GetState();
     }
 }

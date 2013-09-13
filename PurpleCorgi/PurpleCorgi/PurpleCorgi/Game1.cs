@@ -33,6 +33,12 @@ namespace PurpleCorgi
         private RenderTarget2D testMiniGameCanvas;
         private MiniGame testMiniGame;
 
+        private class MiniGameContext
+        {
+            public MiniGame game;
+            public RenderTarget2D canvas;
+        }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
