@@ -44,6 +44,8 @@ namespace PurpleCorgi
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
+            graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
             base.Initialize();
         }
@@ -60,7 +62,7 @@ namespace PurpleCorgi
             whitePixel = new Texture2D(GraphicsDevice, 1, 1);
             whitePixel.SetData(new[] { Color.White });
 
-            w1 = new World(new Vector2(0, 9.82f));
+            w1 = new World(new Vector2(0, GameConstants.InGameGravity));
         }
 
         /// <summary>
