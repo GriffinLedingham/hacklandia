@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurpleCorgi", "PurpleCorgi\PurpleCorgi\PurpleCorgi.csproj", "{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurpleCorgiContent", "PurpleCorgi\PurpleCorgiContent\PurpleCorgiContent.contentproj", "{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corgi", "Corgi\Corgi.csproj", "{27AA8855-D252-4C5F-A125-0F0AEC83A709}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics XNA", "Farseer Physics Engine 3.5\Farseer Physics XNA.csproj", "{0A850700-1ABB-4288-A391-6726B90EBEB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Debug|x86.ActiveCfg = Debug|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Debug|x86.Build.0 = Debug|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Release|Any CPU.ActiveCfg = Release|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Release|x86.ActiveCfg = Release|x86
+		{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}.Release|x86.Build.0 = Release|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Debug|x86.ActiveCfg = Debug|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Release|Any CPU.ActiveCfg = Release|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}.Release|x86.ActiveCfg = Release|x86
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{27AA8855-D252-4C5F-A125-0F0AEC83A709}.Release|x86.ActiveCfg = Release|Any CPU
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.Build.0 = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|Any CPU.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
