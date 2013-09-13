@@ -116,10 +116,6 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Corgi\Corgi.csproj">
-      <Project>{27aa8855-d252-4c5f-a125-0f0aec83a709}</Project>
-      <Name>Corgi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Farseer Physics Engine 3.5\Farseer Physics XNA.csproj">
       <Project>{0a850700-1abb-4288-a391-6726b90ebeb9}</Project>
       <Name>Farseer Physics XNA</Name>

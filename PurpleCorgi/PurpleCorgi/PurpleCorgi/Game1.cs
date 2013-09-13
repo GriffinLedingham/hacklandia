@@ -13,7 +13,6 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
-using Corgi;
 
 namespace PurpleCorgi
 {
