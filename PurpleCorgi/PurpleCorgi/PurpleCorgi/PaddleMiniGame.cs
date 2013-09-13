@@ -10,6 +10,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
+using Corgie;
 
 namespace PurpleCorgi
 {
@@ -34,17 +35,22 @@ namespace PurpleCorgi
 
         private Texture2D circleTexture;
 
+        private Kinect ein;
+
         public PaddleMiniGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
             sb = new SpriteBatch(graphicsDevice);
 
+            ein = new Kinect();
+            ein.Init();
+
             circleTexture = CreateCircle(8, graphicsDevice);
 
             gameState = MiniGameState.Initialized;
 
-            physicsWorld = new World(new Vector2(0, GameConstants.InGameGravity));
+            physicsWorld = new World(new Vector2(0, 0.8f));
 
             paddle = BodyFactory.CreateRectangle(physicsWorld, paddle_width * pixelToUnit, paddle_height * pixelToUnit, 1000f);
             paddle.BodyType = BodyType.Static;
@@ -67,6 +73,14 @@ namespace PurpleCorgi
 
             KeyboardState ks = Keyboard.GetState();
 
+            if (ks.IsKeyDown(Keys.Tab))
+            {
+                ball.Position = new Vector2(320 * pixelToUnit, 100 * pixelToUnit);
+                ball.AngularVelocity = 0;
+                ball.LinearVelocity = Vector2.Zero;
+            }
+
+            /*
             if (ks.IsKeyDown(Keys.A))
             {
                 paddle.Rotation += 0.01f;
@@ -74,6 +88,23 @@ namespace PurpleCorgi
             else if (ks.IsKeyDown(Keys.D))
             {
                 paddle.Rotation -= 0.01f;
+            }
+             */
+
+            
+            //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
+
+            //paddle.Rotation = -ein.RightHandAngle;
+            if (Math.Abs(paddle.Rotation - (-1 * ein.RightHandAngle)) > 0.025f)
+            {
+                if (paddle.Rotation < (-1 * ein.RightHandAngle))
+                {
+                    paddle.Rotation += 0.051f;
+                }
+                else if (paddle.Rotation > (-1 * ein.RightHandAngle))
+                {
+                    paddle.Rotation -= 0.051f;
+                }
             }
 
             // Simulate physics.

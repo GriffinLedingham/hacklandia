@@ -13,6 +13,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
+using Corgie;
 
 namespace PurpleCorgi
 {
@@ -57,7 +58,8 @@ namespace PurpleCorgi
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Kinect ein = new Kinect();
+            ein.Init();
 
             base.Initialize();
         }
