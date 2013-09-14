@@ -21,10 +21,51 @@ namespace PurpleCorgi
         private Color bgColor = Color.Black;
         private Star[] stars;
 
-        public Vector2 playerPosition = new Vector2(320, 260);
+        public Vector2 playerPosition = new Vector2(320, 300);
+        public float playerAngle = (float)Math.PI * 1.5f;
 
         private List<Alien> aliens;
         private List<PlayerBullet> bullets;
+        private List<Particle> particles;
+
+        private float pushAlienTimer;
+        private float timeBetweenNewAliens = 3000f;
+
+        private class Particle
+        {
+            public Vector2 position;
+            public float direction;
+            public float velocity;
+            public float timePassed;
+            public float duration;
+            public bool dead;
+
+            public Particle(Vector2 position, float direction, float velocity)
+            {
+                this.position = position;
+                this.direction = direction;
+                this.velocity = velocity;
+                this.timePassed = 0;
+                this.duration = 500 + (Game1.GameRandom.Next() % 500f);
+                this.dead = false;
+            }
+
+            public void Update(GameTime currentTime)
+            {
+                timePassed += currentTime.ElapsedGameTime.Milliseconds;
+                if (timePassed > duration)
+                {
+                    dead = true;
+                }
+
+                this.position += new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction)) * velocity;
+            }
+
+            public void Draw(SpriteBatch sb)
+            {
+                sb.Draw(Game1.WhitePixel, position, null, Game1.GameRandom.Next() % 2 == 0 ? Color.Orange : Color.Yellow, timePassed / 500f, new Vector2(0.5f), new Vector2(10), SpriteEffects.None, 0.5f);
+            }
+        }
 
         private struct Star
         {
@@ -169,6 +210,8 @@ namespace PurpleCorgi
             this.graphicsDevice = graphicsDevice;
             sb = new SpriteBatch(graphicsDevice);
 
+            pushAlienTimer = 0;
+
             stars = new Star[100];
             for (int i = 0; i < 100; i++)
             {
@@ -180,6 +223,7 @@ namespace PurpleCorgi
 
             aliens = new List<Alien>();
             bullets = new List<PlayerBullet>();
+            particles = new List<Particle>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -197,11 +241,23 @@ namespace PurpleCorgi
             return a.dead;
         }
 
+        private static bool ParticleDead(Particle p)
+        {
+            return p.dead;
+        }
+
         public void Update(GameTime gameTime)
         {
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
+            }
+
+            pushAlienTimer += gameTime.ElapsedGameTime.Milliseconds;
+            if (pushAlienTimer > timeBetweenNewAliens)
+            {
+                pushAlienTimer = 0;
+                aliens.Add(new Alien(this));
             }
 
             {
@@ -230,6 +286,9 @@ namespace PurpleCorgi
                             if (al.color == winColor)
                             {
                                 bullets.Add(new PlayerBullet(playerPosition, al));
+
+                                playerAngle = (float)(Math.Atan2(al.position.Y - playerPosition.Y, al.position.X - playerPosition.X));
+
                                 break;
                             }
                         }
@@ -250,10 +309,24 @@ namespace PurpleCorgi
             foreach (Alien al in aliens)
             {
                 al.Update(gameTime);
+
+                if (al.dead)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        particles.Add(new Particle(al.position, (float)(Game1.GameRandom.NextDouble() * Math.PI * 2), 3));
+                    }
+                }
+            }
+
+            for (int i = 0; i < particles.Count; i++)
+            {
+                particles[i].Update(gameTime);
             }
 
             bullets.RemoveAll(BulletDead);
             aliens.RemoveAll(AlienDead);
+            particles.RemoveAll(ParticleDead);
 
 #if CHANGE_BG_COLOR
             {
@@ -285,7 +358,7 @@ namespace PurpleCorgi
                 sb.Draw(Game1.WhitePixel, new Vector2(stars[i].position.X, (GameConstants.GameResolutionHeight + 300) * (stars[i].timePassed / stars[i].durationOnScreen)), Color.White);
             }
 
-            sb.Draw(Game1.spaceSheet, new Vector2(320, 260), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, new Vector2(8), 2.0f, SpriteEffects.None, 0.0f);
+            sb.Draw(Game1.spaceSheet, playerPosition, new Rectangle(0, 0, 16, 16), Color.White, playerAngle, new Vector2(8), 2.0f, SpriteEffects.None, 0.0f);
 
             foreach (Alien ae in aliens)
             {
@@ -295,6 +368,11 @@ namespace PurpleCorgi
             foreach (PlayerBullet b in bullets)
             {
                 b.Draw(sb);
+            }
+
+            foreach (Particle p in particles)
+            {
+                p.Draw(sb);
             }
 
             sb.End();
