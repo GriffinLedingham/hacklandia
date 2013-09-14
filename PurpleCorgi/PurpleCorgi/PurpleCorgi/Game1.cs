@@ -91,7 +91,7 @@ namespace PurpleCorgi
                 else if (i == 1)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new TestMiniGriff(GraphicsDevice);
+                    miniGames[i].game = new SpaceGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else
