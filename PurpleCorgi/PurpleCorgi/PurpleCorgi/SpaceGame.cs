@@ -23,7 +23,8 @@ namespace PurpleCorgi
 
         public Vector2 playerPosition = new Vector2(320, 260);
 
-        private Alien testAlien;
+        private List<Alien> aliens;
+        private List<PlayerBullet> bullets;
 
         private struct Star
         {
@@ -71,13 +72,35 @@ namespace PurpleCorgi
 
             private SpaceGame parent;
 
-            private AlienColor color;
+            public bool dead = false;
 
-            public const float alienVelocity = 0.1f;
+            private AlienColor color;
+            public Color DrawColor
+            {
+                get
+                {
+                    switch (color)
+                    {
+                        case AlienColor.Red:
+                            return Color.Red;
+                        case AlienColor.Green:
+                            return Color.Green;
+                        case AlienColor.Blue:
+                            return Color.Blue;
+                        case AlienColor.Yellow:
+                            return Color.Yellow;
+                    }
+
+                    return Color.White;
+                }
+            }
+
+
+            public const float alienVelocity = 0.3f;
 
             public Alien(SpaceGame parent)
             {
-                position = new Vector2(Game1.GameRandom.Next() % (GameConstants.GameResolutionWidth + 100) - 50, -10);
+                position = new Vector2(Game1.GameRandom.Next() % (GameConstants.MiniGameCanvasWidth * 0.8f), -10);
 
                 this.parent = parent;
                 timePassed = 0;
@@ -100,6 +123,47 @@ namespace PurpleCorgi
             }
         }
 
+        private class PlayerBullet
+        {
+            public Vector2 position;
+            public const float bulletSpeed = 6.0f;
+            public Alien target;
+            public float timePassed;
+            public bool dead = false;
+
+            public PlayerBullet(Vector2 position, Alien target)
+            {
+                this.position = position;
+                this.target = target;
+                timePassed = Game1.GameRandom.Next() % 1000;
+            }
+
+            public void Update(GameTime currentTime)
+            {
+                float targetAngle = (float)Math.Atan2(target.position.Y - position.Y, target.position.X - position.X);
+
+                timePassed += currentTime.ElapsedGameTime.Milliseconds;
+
+                position += new Vector2((float)Math.Cos(targetAngle), (float)Math.Sin(targetAngle)) * bulletSpeed;
+
+                if (Vector2.Distance(position, target.position) < 0.4f)
+                {
+                    target.dead = true;
+                    dead = true;
+                }
+
+                if (target.dead)
+                {
+                    dead = true;
+                }
+            }
+
+            public void Draw(SpriteBatch sb)
+            {
+                sb.Draw(Game1.WhitePixel, position, null, target.DrawColor, timePassed / 500f, new Vector2(0.5f), new Vector2(10), SpriteEffects.None, 0.5f);
+            }
+        }
+
         public SpaceGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -114,7 +178,23 @@ namespace PurpleCorgi
             ein = new Kinect(0, 0);
             ein.Init();
 
-            testAlien = new Alien(this);
+            aliens = new List<Alien>();
+            bullets = new List<PlayerBullet>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                aliens.Add(new Alien(this));
+            }
+        }
+
+        private static bool BulletDead(PlayerBullet b)
+        {
+            return b.dead;
+        }
+
+        private static bool AlienDead(Alien a)
+        {
+            return a.dead;
         }
 
         public void Update(GameTime gameTime)
@@ -124,12 +204,32 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
+            KeyboardState ks = Keyboard.GetState();
+            if (ks.IsKeyDown(Keys.Space))
+            {
+                if (aliens.Count > 0)
+                {
+                    bullets.Add(new PlayerBullet(playerPosition, aliens[0]));
+                }
+            }
+
             for (int i = 0; i < 100; i++)
             {
                 stars[i].Update(gameTime);
             }
 
-            testAlien.Update(gameTime);
+            foreach (PlayerBullet b in bullets)
+            {
+                b.Update(gameTime);
+            }
+
+            foreach (Alien al in aliens)
+            {
+                al.Update(gameTime);
+            }
+
+            bullets.RemoveAll(BulletDead);
+            aliens.RemoveAll(AlienDead);
 
 #if CHANGE_BG_COLOR
             {
@@ -161,9 +261,18 @@ namespace PurpleCorgi
                 sb.Draw(Game1.WhitePixel, new Vector2(stars[i].position.X, (GameConstants.GameResolutionHeight + 300) * (stars[i].timePassed / stars[i].durationOnScreen)), Color.White);
             }
 
-            sb.Draw(Game1.spaceSheet, new Vector2(320, 260), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 2.0f, SpriteEffects.None, 0.0f);
+            sb.Draw(Game1.spaceSheet, new Vector2(320, 260), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, new Vector2(8), 2.0f, SpriteEffects.None, 0.0f);
 
-            testAlien.Draw(sb);
+            foreach (Alien ae in aliens)
+            {
+                ae.Draw(sb);
+            }
+
+            foreach (PlayerBullet b in bullets)
+            {
+                b.Draw(sb);
+            }
+
             sb.End();
         }
 
