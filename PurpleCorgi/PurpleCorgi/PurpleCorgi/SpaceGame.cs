@@ -21,6 +21,10 @@ namespace PurpleCorgi
         private Color bgColor = Color.Black;
         private Star[] stars;
 
+        public Vector2 playerPosition = new Vector2(320, 260);
+
+        private Alien testAlien;
+
         private struct Star
         {
             public Vector2 position;
@@ -47,6 +51,55 @@ namespace PurpleCorgi
             }
         }
 
+        private class Alien
+        {
+            /// <summary>
+            /// Represents alien color as well as Y offset on sprite sheet
+            /// </summary>
+            public enum AlienColor
+            {
+                Red = 0,
+                Green = 1,
+                Blue = 2,
+                Yellow = 3,
+            }
+
+            public Vector2 position;
+            public float targetAngle;
+
+            private float timePassed;
+
+            private SpaceGame parent;
+
+            private AlienColor color;
+
+            public const float alienVelocity = 0.1f;
+
+            public Alien(SpaceGame parent)
+            {
+                position = new Vector2(Game1.GameRandom.Next() % (GameConstants.GameResolutionWidth + 100) - 50, -10);
+
+                this.parent = parent;
+                timePassed = 0;
+
+                color = (AlienColor)(Game1.GameRandom.Next() % 4);
+            }
+
+            public void Update(GameTime currentTime)
+            {
+                targetAngle = (float)Math.Atan2(parent.playerPosition.Y - position.Y, parent.playerPosition.X - position.X);
+
+                timePassed += currentTime.ElapsedGameTime.Milliseconds;
+
+                position += new Vector2((float)Math.Cos(targetAngle), (float)Math.Sin(targetAngle)) * alienVelocity;
+            }
+
+            public void Draw(SpriteBatch sb)
+            {
+                sb.Draw(Game1.spaceSheet, position, new Rectangle((((int)timePassed / 500) % 2) * 16, 16 + 16 * (int)color, 16, 16), Color.White, targetAngle - (float)(Math.PI / 2), new Vector2(8), 3.0f, SpriteEffects.None, 0.5f);
+            }
+        }
+
         public SpaceGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -60,6 +113,8 @@ namespace PurpleCorgi
 
             ein = new Kinect(0, 0);
             ein.Init();
+
+            testAlien = new Alien(this);
         }
 
         public void Update(GameTime gameTime)
@@ -73,6 +128,8 @@ namespace PurpleCorgi
             {
                 stars[i].Update(gameTime);
             }
+
+            testAlien.Update(gameTime);
 
 #if CHANGE_BG_COLOR
             {
@@ -105,6 +162,8 @@ namespace PurpleCorgi
             }
 
             sb.Draw(Game1.spaceSheet, new Vector2(320, 260), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 2.0f, SpriteEffects.None, 0.0f);
+
+            testAlien.Draw(sb);
             sb.End();
         }
 
