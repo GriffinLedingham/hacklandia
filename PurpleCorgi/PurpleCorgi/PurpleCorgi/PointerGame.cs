@@ -39,6 +39,12 @@ namespace PurpleCorgi
             {
                 gameState = MiniGameState.Running;
             }
+
+            if (ein.Pointer.X != 0)
+                Console.WriteLine("here");
+            
+            pointerPosition.X = ein.Pointer.X * 200;
+            pointerPosition.Y = ein.Pointer.Y * 200 * -1;
         }
 
         public void Render(RenderTarget2D canvas)
