@@ -92,7 +92,7 @@ namespace PurpleCorgi
                 if (i == 1)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new PaddleMiniGame(GraphicsDevice);
+                    miniGames[i].game = new HeadBallGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else if (i == 0)
