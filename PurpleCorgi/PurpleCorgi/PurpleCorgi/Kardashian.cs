@@ -65,7 +65,7 @@ namespace PurpleCorgi
             body.BodyType = BodyType.Dynamic;
             size = new Vector2(width, height);
             Size = size;
-            body.Position = new Vector2(GameConstants.GameResolutionWidth/2 * pixelToUnit, 50);
+            body.Position = new Vector2(200, 50);
         }
 
         public void Update(GameTime gameTime)

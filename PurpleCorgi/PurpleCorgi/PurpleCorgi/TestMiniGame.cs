@@ -20,11 +20,15 @@ namespace PurpleCorgi
 
         private MiniGameState gameState;
 
+        private float miniGameDuration;
+
         public TestMiniGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
             sb = new SpriteBatch(graphicsDevice);
+
+            miniGameDuration = 0;
 
             redBoxPosition = new Vector2(Game1.GameRandom.Next() % (GameConstants.MiniGameCanvasWidth - 16), Game1.GameRandom.Next() % (GameConstants.MiniGameCanvasHeight - 16));
             backgroundColor = new Color((float)Game1.GameRandom.NextDouble(), (float)Game1.GameRandom.NextDouble(), (float)Game1.GameRandom.NextDouble(), 1);
@@ -32,7 +36,7 @@ namespace PurpleCorgi
             gameState = MiniGameState.Initialized;
         }
 
-        public void Update(GameTime GameTime)
+        public void Update(GameTime gameTime)
         {
             if (gameState == MiniGameState.Initialized)
             {
@@ -40,6 +44,12 @@ namespace PurpleCorgi
             }
 
             KeyboardState ks = Keyboard.GetState();
+
+            miniGameDuration += gameTime.ElapsedGameTime.Milliseconds;
+            if (miniGameDuration > 10000f)
+            {
+                gameState = MiniGameState.Win;
+            }
 
             if (ks.IsKeyDown(Keys.Right))
             {

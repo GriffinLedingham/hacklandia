@@ -26,6 +26,11 @@ namespace PurpleCorgi
         /// MiniGame has ended and the player probably messed up
         /// </summary>
         Lose,
+
+        /// <summary>
+        /// MiniGame has ended and the player probably did something awesome
+        /// </summary>
+        Win,
     }
 
 
