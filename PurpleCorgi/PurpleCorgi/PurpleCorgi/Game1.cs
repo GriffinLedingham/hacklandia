@@ -51,7 +51,7 @@ namespace PurpleCorgi
             graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
             graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
-            //graphics.ToggleFullScreen();
+            graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -103,7 +103,7 @@ namespace PurpleCorgi
                 else if (i == 2)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new Kardashian(GraphicsDevice);
+                    miniGames[i].game = new SpaceGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else if (i == 3)

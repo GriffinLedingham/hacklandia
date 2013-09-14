@@ -21,7 +21,7 @@ namespace PurpleCorgi
 
         private float paddle_width = 256;
         private float paddle_height = 16;
-        private float ball_radius = 20;
+        private float ball_radius = 8;
 
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
@@ -46,7 +46,7 @@ namespace PurpleCorgi
             ein = new Kinect(100, 100);
             ein.Init();
 
-            circleTexture = CreateCircle(20, graphicsDevice);
+            circleTexture = CreateCircle(8, graphicsDevice);
 
             gameState = MiniGameState.Initialized;
 

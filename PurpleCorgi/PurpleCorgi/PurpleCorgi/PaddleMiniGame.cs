@@ -33,9 +33,13 @@ namespace PurpleCorgi
         private Vector2 paddle_size;
         private Body ball;
 
+        private float winTimer = 0.0f;
+        
         private Texture2D circleTexture;
 
         private Kinect ein;
+
+        private bool win, lost = false;
 
         public PaddleMiniGame(GraphicsDevice graphicsDevice)
         {
@@ -69,6 +73,18 @@ namespace PurpleCorgi
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
+            }
+
+            winTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+            if (winTimer > 10000)
+            {
+                win = true;
+            }
+
+            if (ball.Position.Y > GameConstants.MiniGameCanvasHeight)
+            {
+                lost = true;
             }
 
             KeyboardState ks = Keyboard.GetState();
@@ -125,7 +141,12 @@ namespace PurpleCorgi
 
         public MiniGameState GetState()
         {
-            return gameState;
+            if (win)
+                return MiniGameState.Win;
+            else if (lost)
+                return MiniGameState.Lose;
+            else
+                return MiniGameState.Running;
         }
 
         public Texture2D CreateCircle(int radius, GraphicsDevice gd)

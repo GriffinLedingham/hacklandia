@@ -27,7 +27,7 @@ namespace PurpleCorgi
         World world;
         Texture2D PlainTexture;
 
-        Vector2 Size, size, SizeFloor, sizeFloor;
+        Vector2 Size, size;
 
 
         float height, width, density, posx, posy;
@@ -50,10 +50,10 @@ namespace PurpleCorgi
             height = 50;
             width = 50;
             density = 1f;
-            posx = 5;
-            posy = 5;
+            posx = 200;
+            posy = 50;
 
-            gravity = 9.8f;
+            gravity = 0f;
 
             // TODO: Add your initialization logic here
             world = new World(new Vector2(0, gravity));
@@ -65,7 +65,7 @@ namespace PurpleCorgi
             body.BodyType = BodyType.Dynamic;
             size = new Vector2(width, height);
             Size = size;
-            body.Position = new Vector2(200, 50);
+            body.Position = new Vector2(posx * pixelToUnit, posy * pixelToUnit);
         }
 
         public void Update(GameTime gameTime)
@@ -75,8 +75,14 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
-            KeyboardState ks = Keyboard.GetState();
-
+            /*if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.W))
+                body.Position += new Vector2(0,.1f);
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A))
+                body.Position += new Vector2(.1f, 0);
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S))
+                body.Position -= new Vector2(0, .1f);
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D))
+                body.Position -= new Vector2(.1f, 0);*/
 
 
 
@@ -84,19 +90,10 @@ namespace PurpleCorgi
             //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
 
             //paddle.Rotation = -ein.RightHandAngle;
-            /*if (Math.Abs(paddle.Rotation - (-1 * ein.RPRKAngle)) > 0.025f)
-            {
+            body.Position = new Vector2((((ein.UserX / .5f) * GameConstants.MiniGameCanvasWidth / 2) + GameConstants.MiniGameCanvasWidth/2) * pixelToUnit, 
+                (((ein.UserZ -.9f) * GameConstants.MiniGameCanvasHeight / 2)) * pixelToUnit);
 
-
-                if (paddle.Rotation + .9 < (-1 * ein.RPRKAngle))
-                {
-                    paddle.Rotation += 0.051f;
-                }
-                else if (paddle.Rotation + .9 > (-1 * ein.RPRKAngle))
-                {
-                    paddle.Rotation -= 0.051f;
-                }
-            }*/
+            Console.WriteLine(ein.UserZ);
 
             // Simulate physics.
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
