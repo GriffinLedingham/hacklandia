@@ -35,6 +35,8 @@ namespace PurpleCorgi
         private RenderTarget2D testMiniGameCanvas;
         private MiniGame testMiniGame;
 
+        public static Texture2D spaceSheet;
+
         private class MiniGameContext
         {
             public MiniGame game;
@@ -76,8 +78,7 @@ namespace PurpleCorgi
             whitePixel = new Texture2D(GraphicsDevice, 1, 1);
             whitePixel.SetData(new[] { Color.White });
 
-            testMiniGameCanvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-            testMiniGame = new TestMiniGame(GraphicsDevice);
+            spaceSheet = Content.Load<Texture2D>("spaceSheet");
 
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
@@ -92,6 +93,12 @@ namespace PurpleCorgi
                 {
                     miniGames[i] = new MiniGameContext();
                     miniGames[i].game = new SpaceGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
+                else if (i == 2)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new PointerGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else

@@ -98,11 +98,13 @@ namespace PurpleCorgi
             graphicsDevice.SetRenderTarget(canvas);
             graphicsDevice.Clear(bgColor);
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             for (int i = 0; i < 100; i++)
             {
                 sb.Draw(Game1.WhitePixel, new Vector2(stars[i].position.X, (GameConstants.GameResolutionHeight + 300) * (stars[i].timePassed / stars[i].durationOnScreen)), Color.White);
             }
+
+            sb.Draw(Game1.spaceSheet, new Vector2(320, 260), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 2.0f, SpriteEffects.None, 0.0f);
             sb.End();
         }
 
