@@ -43,7 +43,7 @@ namespace PurpleCorgi
 
             sb = new SpriteBatch(graphicsDevice);
 
-            ein = new Kinect();
+            ein = new Kinect(0, 0);
             ein.Init();
 
             circleTexture = CreateCircle(8, graphicsDevice);
@@ -95,13 +95,13 @@ namespace PurpleCorgi
             //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
 
             //paddle.Rotation = -ein.RightHandAngle;
-            if (Math.Abs(paddle.Rotation - (-1 * ein.RightHandAngle)) > 0.025f)
+            if (Math.Abs(paddle.Rotation - (-1 * ein.RHRSAngle)) > 0.025f)
             {
-                if (paddle.Rotation < (-1 * ein.RightHandAngle))
+                if (paddle.Rotation < (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation += 0.051f;
                 }
-                else if (paddle.Rotation > (-1 * ein.RightHandAngle))
+                else if (paddle.Rotation > (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation -= 0.051f;
                 }
