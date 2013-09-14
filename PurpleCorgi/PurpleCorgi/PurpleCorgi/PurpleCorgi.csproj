@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="FootGame.cs" />
     <Compile Include="HeadBallGame.cs" />
+    <Compile Include="Kardashian.cs" />
     <Compile Include="PaddleMiniGame.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="MiniGame.cs" />

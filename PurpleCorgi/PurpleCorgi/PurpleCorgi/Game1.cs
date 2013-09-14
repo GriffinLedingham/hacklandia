@@ -101,6 +101,12 @@ namespace PurpleCorgi
                     miniGames[i].game = new PlatformerGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
+                else if (i == 2)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new Kardashian(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
                 else
                 {
                     miniGames[i] = new MiniGameContext();
