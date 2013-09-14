@@ -53,20 +53,20 @@ namespace PurpleCorgi
 
             if (ks.IsKeyDown(Keys.Right))
             {
-                redBoxPosition.X += redBoxSpeed * GameTime.ElapsedGameTime.Milliseconds;
+                redBoxPosition.X += redBoxSpeed * gameTime.ElapsedGameTime.Milliseconds;
             }
             else if (ks.IsKeyDown(Keys.Left))
             {
-                redBoxPosition.X -= redBoxSpeed * GameTime.ElapsedGameTime.Milliseconds;
+                redBoxPosition.X -= redBoxSpeed * gameTime.ElapsedGameTime.Milliseconds;
             }
 
             if (ks.IsKeyDown(Keys.Down))
             {
-                redBoxPosition.Y += redBoxSpeed * GameTime.ElapsedGameTime.Milliseconds;
+                redBoxPosition.Y += redBoxSpeed * gameTime.ElapsedGameTime.Milliseconds;
             }
             else if (ks.IsKeyDown(Keys.Up))
             {
-                redBoxPosition.Y -= redBoxSpeed * GameTime.ElapsedGameTime.Milliseconds;
+                redBoxPosition.Y -= redBoxSpeed * gameTime.ElapsedGameTime.Milliseconds;
             }
         }
 
