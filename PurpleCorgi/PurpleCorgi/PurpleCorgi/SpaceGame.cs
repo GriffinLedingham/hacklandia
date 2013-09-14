@@ -74,7 +74,7 @@ namespace PurpleCorgi
 
             public bool dead = false;
 
-            private AlienColor color;
+            public AlienColor color;
             public Color DrawColor
             {
                 get
@@ -204,12 +204,36 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
-            KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Space))
             {
-                if (aliens.Count > 0)
+                string lastColor = ein.LastColor;
+
+                if (!String.IsNullOrEmpty(lastColor))
                 {
-                    bullets.Add(new PlayerBullet(playerPosition, aliens[0]));
+                    bool assigned = true;
+                    Alien.AlienColor winColor = Alien.AlienColor.Red;
+
+                    switch (lastColor)
+                    {
+                        case "RED": winColor = Alien.AlienColor.Red; break;
+                        case "GREEN": winColor = Alien.AlienColor.Green; break;
+                        case "YELLOW": winColor = Alien.AlienColor.Yellow; break;
+                        case "BLUE": winColor = Alien.AlienColor.Blue; break;
+                        default:
+                            assigned = false;
+                            break;
+                    }
+
+                    if (assigned)
+                    {
+                        foreach (Alien al in aliens)
+                        {
+                            if (al.color == winColor)
+                            {
+                                bullets.Add(new PlayerBullet(playerPosition, al));
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
