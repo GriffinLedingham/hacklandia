@@ -36,7 +36,7 @@ namespace PurpleCorgi
         private MiniGame testMiniGame;
 
         public static Texture2D corgi_Sprite; 
-
+        public static Texture2D spaceSheet;
 
         private class MiniGameContext
         {
@@ -63,7 +63,7 @@ namespace PurpleCorgi
         /// </summary>
         protected override void Initialize()
         {
-            Kinect ein = new Kinect(100,100);
+            Kinect ein = new Kinect(0, 0);
             ein.Init();
 
             base.Initialize();
@@ -81,30 +81,35 @@ namespace PurpleCorgi
             whitePixel = new Texture2D(GraphicsDevice, 1, 1);
             whitePixel.SetData(new[] { Color.White });
 
-            testMiniGameCanvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-            testMiniGame = new TestMiniGame(GraphicsDevice);
+            spaceSheet = Content.Load<Texture2D>("spaceSheet");
 
             corgi_Sprite = Content.Load<Texture2D>("corgi");
 
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
             {
-                if (i == 1)
+                if (i == 0)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new HeadBallGame(GraphicsDevice);
+                    miniGames[i].game = new PaddleMiniGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
-                else if (i == 0)
+                else if (i == 1)
                 {
                     miniGames[i] = new MiniGameContext();
                     miniGames[i].game = new PlatformerGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
-                else
+                else if (i == 2)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new TestMiniGame(GraphicsDevice);
+                    miniGames[i].game = new SpaceGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
+                else if (i == 3)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new HeadBallGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
             }
