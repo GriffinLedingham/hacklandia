@@ -112,6 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FootGame.cs" />
     <Compile Include="PaddleMiniGame.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="MiniGame.cs" />

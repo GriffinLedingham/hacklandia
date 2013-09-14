@@ -35,6 +35,9 @@ namespace PurpleCorgi
         private RenderTarget2D testMiniGameCanvas;
         private MiniGame testMiniGame;
 
+        public static Texture2D corgi_Sprite; 
+
+
         private class MiniGameContext
         {
             public MiniGame game;
@@ -47,6 +50,8 @@ namespace PurpleCorgi
 
             graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
             graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
+
+            //graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -59,7 +64,7 @@ namespace PurpleCorgi
         protected override void Initialize()
         {
             Kinect ein = new Kinect(100,100);
-            //ein.Init();
+            ein.Init();
 
             base.Initialize();
         }
@@ -79,10 +84,18 @@ namespace PurpleCorgi
             testMiniGameCanvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
             testMiniGame = new TestMiniGame(GraphicsDevice);
 
+            corgi_Sprite = Content.Load<Texture2D>("corgi");
+
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
             {
                 if (i == 1)
+                {
+                    miniGames[i] = new MiniGameContext();
+                    miniGames[i].game = new PaddleMiniGame(GraphicsDevice);
+                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                }
+                else if (i == 0)
                 {
                     miniGames[i] = new MiniGameContext();
                     miniGames[i].game = new PlatformerGame(GraphicsDevice);

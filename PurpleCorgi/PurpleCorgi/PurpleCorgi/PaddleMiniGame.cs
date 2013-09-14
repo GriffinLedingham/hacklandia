@@ -19,7 +19,7 @@ namespace PurpleCorgi
         private GraphicsDevice graphicsDevice;
         private SpriteBatch sb;
 
-        private float paddle_width = 128;
+        private float paddle_width = 256;
         private float paddle_height = 16;
         private float ball_radius = 8;
 
@@ -95,13 +95,13 @@ namespace PurpleCorgi
             //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
 
             //paddle.Rotation = -ein.RightHandAngle;
-            if (Math.Abs(paddle.Rotation - (-1 * ein.RightHandAngle)) > 0.025f)
+            if (Math.Abs(paddle.Rotation - (-1 * ein.RHRSAngle)) > 0.025f)
             {
-                if (paddle.Rotation < (-1 * ein.RightHandAngle))
+                if (paddle.Rotation < (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation += 0.051f;
                 }
-                else if (paddle.Rotation > (-1 * ein.RightHandAngle))
+                else if (paddle.Rotation > (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation -= 0.051f;
                 }

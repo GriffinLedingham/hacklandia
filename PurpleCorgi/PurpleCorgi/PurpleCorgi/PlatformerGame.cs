@@ -9,6 +9,8 @@ using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using FarseerPhysics.Dynamics.Joints;
+using FarseerPhysics.Dynamics.Contacts;
+using Corgie;
 
 namespace PurpleCorgi
 {
@@ -28,35 +30,43 @@ namespace PurpleCorgi
         private float gravity;
         private float height, width, density, posx, posy;
 
-        private float rod_height, rod_width, rod_density, rod_posx, rod_posy;
+        private float enemy_height, enemy_width, enemy_density, enemy_posx, enemy_posy;
         private float floor_height, floor_width, floor_density, floor_posx, floor_posy;
         private float fixpt_height, fixpt_width, fixpt_density, fixpt_posx, fixpt_posy;
 
-        private Vector2 size, Size, rod_size, rod_Size, floor_size, floor_Size;
+        private Vector2 size, Size, enemy_size, enemy_Size, floor_size, floor_Size;
 
-
+        private bool on_Ground = false;
 
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
 
+        private Kinect ein;
 
-        Body body, rod_body, floor_body, fixpt_body;
+        private Corgi2 lastForearm = null;
+
+
+
+        Body body, enemy_body, floor_body, fixpt_body;
 
         public PlatformerGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
+            ein = new Kinect(100, 100);
+            ein.Init();
+
             height = 50;
             width = 50;
-            density = 1f;
+            density = .5f;
             posx = 350;
             posy = 0;
 
-            rod_height = 100;
-            rod_width = 20;
-            rod_density = 1f;
-            rod_posx = 350;
-            rod_posy = 150;
+            enemy_height = 20;
+            enemy_width = 20;
+            enemy_density = 1f;
+            enemy_posx = GameConstants.MiniGameCanvasWidth - 50;
+            enemy_posy = 150;
 
             floor_height = 20;
             floor_width = GameConstants.MiniGameCanvasWidth;
@@ -71,8 +81,6 @@ namespace PurpleCorgi
             sb = new SpriteBatch(graphicsDevice);
 
 
-
-            redBoxPosition = new Vector2(Game1.GameRandom.Next() % (GameConstants.MiniGameCanvasWidth - 16), Game1.GameRandom.Next() % (GameConstants.MiniGameCanvasHeight - 16));
             backgroundColor = new Color((float)Game1.GameRandom.NextDouble(), (float)Game1.GameRandom.NextDouble(), (float)Game1.GameRandom.NextDouble(), 1);
             gravity = 9.8f;
             world = new World(new Vector2(0, gravity));
@@ -80,16 +88,15 @@ namespace PurpleCorgi
             body = BodyFactory.CreateRectangle(world, width * pixelToUnit, height * pixelToUnit, density);
             body.BodyType = BodyType.Dynamic;
             body.SleepingAllowed = false;
-
             size = new Vector2(width, height);
             Size = size;
             body.Position = new Vector2(posx * pixelToUnit, posy * pixelToUnit);
 
-            /*rod_body = BodyFactory.CreateRectangle(world, rod_width * pixelToUnit, rod_height * pixelToUnit, rod_density);
-            rod_body.BodyType = BodyType.Dynamic;
-            rod_size = new Vector2(rod_width, rod_height);
-            rod_Size = rod_size;
-            rod_body.Position = new Vector2(rod_posx * pixelToUnit, rod_posy* pixelToUnit);*/
+            enemy_body = BodyFactory.CreateRectangle(world, enemy_width * pixelToUnit, enemy_height * pixelToUnit, enemy_density);
+            enemy_body.BodyType = BodyType.Dynamic;
+            enemy_size = new Vector2(enemy_width, enemy_height);
+            enemy_Size = enemy_size;
+            enemy_body.Position = new Vector2(enemy_posx * pixelToUnit, enemy_posy * pixelToUnit);
 
             floor_body = BodyFactory.CreateRectangle(world, floor_width * pixelToUnit, floor_height * pixelToUnit, floor_density);
             floor_body.BodyType = BodyType.Static;
@@ -111,34 +118,63 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
+            Random random = new Random();
+            int randomNumber = random.Next(0, 100);
+            if (randomNumber > 70 && enemy_body.Position.X < 0)
+            {
+                enemy_body.ResetDynamics();
+                enemy_body.ApplyForce(new Vector2(-.6f, 0));
+
+                enemy_body.Position = new Vector2(GameConstants.MiniGameCanvasWidth * pixelToUnit, (floor_posy - 100) * pixelToUnit);
+            }
+
+            body.OnCollision +=body_OnCollision;
+            float enemyForce = .3f;
             Vector2 force1 = new Vector2(0, 0);
-            float forcePower = 0f;
+            float forcePower = 32.5f;
 
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Up))
-                force1 += new Vector2(0, -forcePower);
+                if (on_Ground) { force1 += new Vector2(15f, -forcePower); on_Ground = false; }
             //rod_body.ApplyForce(new Vector2(0, -4.7f));
             //rod_body.ApplyTorque(10.0f);
             //floor_body.ApplyForce(force1,new Vector2(floor_width/2,0));
 
+            if (lastForearm != null)
+            {
+                if ((ein.LHLEVector.Y - lastForearm.Y) > .05f)
+                {
+                    if (on_Ground) { force1 += new Vector2(3.5f, -forcePower); on_Ground = false; }
+                }
+            }
+            lastForearm = ein.LHLEVector;
+           
             body.ApplyForce(force1);
-
+            enemy_body.ApplyForce(new Vector2(-enemyForce, 0));
             world.Step((float)GameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public void Render(RenderTarget2D canvas)
         {
-            Vector2 scale = new Vector2(Size.X / (float)Game1.WhitePixel.Width, Size.Y / (float)Game1.WhitePixel.Height);
-            Vector2 rod_scale = new Vector2(rod_Size.X / (float)Game1.WhitePixel.Width, rod_Size.Y / (float)Game1.WhitePixel.Height);
+            Vector2 scale = new Vector2(Size.X / (float)Game1.corgi_Sprite.Width, Size.Y / (float)Game1.corgi_Sprite.Height);
+            Vector2 enemy_scale = new Vector2(enemy_Size.X / (float)Game1.WhitePixel.Width, enemy_Size.Y / (float)Game1.WhitePixel.Height);
             Vector2 floor_scale = new Vector2(floor_Size.X / (float)Game1.WhitePixel.Width, floor_Size.Y / (float)Game1.WhitePixel.Height);
 
 
             graphicsDevice.SetRenderTarget(canvas);
             graphicsDevice.Clear(backgroundColor);
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
-            sb.Draw(Game1.WhitePixel, redBoxPosition, null, Color.Red, 0.0f, Vector2.Zero, new Vector2(16), SpriteEffects.None, 0.0f);
-            sb.Draw(Game1.WhitePixel, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), scale, SpriteEffects.None, 0);
+            sb.Draw(Game1.corgi_Sprite, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(Game1.corgi_Sprite.Width / 2.0f, Game1.corgi_Sprite.Height / 2.0f), scale, SpriteEffects.None, 0);
             sb.Draw(Game1.WhitePixel, floor_body.Position * unitToPixel, null, Color.White, floor_body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), floor_scale, SpriteEffects.None, 0);
+            sb.Draw(Game1.WhitePixel, enemy_body.Position * unitToPixel, null, Color.Blue, enemy_body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), enemy_scale, SpriteEffects.None, 0);            
             sb.End();
+        }
+
+        private bool body_OnCollision(Fixture f1, Fixture f2, Contact contact)
+        {
+            if (f1.Body == body && f2.Body == floor_body)
+            {
+                on_Ground = true;}
+            return true;
         }
 
         public MiniGameState GetState()
