@@ -31,12 +31,42 @@ namespace PurpleCorgi
         private static Random rand = new Random();
         public static Random GameRandom { get { return rand; } }
 
-        private MiniGameContext[] miniGames;
-        private RenderTarget2D testMiniGameCanvas;
-        private MiniGame testMiniGame;
+        private List<MiniGameContext> miniGames;
 
         public static Texture2D corgi_Sprite; 
         public static Texture2D spaceSheet;
+
+        private MetaGameState gameState = MetaGameState.Init;
+
+        // running logic
+        private float addMiniGameTimer;
+        private const float addSecondMiniGameDuration = 3000f;
+        private const float addThirdMiniGameDuration = 6000f;
+        private const float addFourthMiniGameDuration = 9000f;
+        //end running logic
+
+        private enum MetaGameState
+        {
+            /// <summary>
+            /// Metagame state on startup. This is used to indicate that game logic needs to be initialized. 
+            /// </summary>
+            Init,
+            
+            /// <summary>
+            /// Game is waiting for player to enter Kinect space and be ready.
+            /// </summary>
+            Lobby,
+
+            /// <summary>
+            /// Game is running and throwing new minigames. Woo.
+            /// </summary>
+            Running,
+
+            /// <summary>
+            /// Player has lost the game. Some sort of result screen that indiciates the Player's progress.
+            /// </summary>
+            PlayerLose,
+        }
 
         private class MiniGameContext
         {
@@ -82,37 +112,26 @@ namespace PurpleCorgi
             whitePixel.SetData(new[] { Color.White });
 
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
-
             corgi_Sprite = Content.Load<Texture2D>("corgi");
 
-            miniGames = new MiniGameContext[4];
-            for (int i = 0; i < 4; i++)
-            {
-                if (i == 0)
-                {
-                    miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new PaddleMiniGame(GraphicsDevice);
-                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                }
-                else if (i == 1)
-                {
-                    miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new PlatformerGame(GraphicsDevice);
-                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                }
-                else if (i == 2)
-                {
-                    miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new SpaceGame(GraphicsDevice);
-                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                }
-                else if (i == 3)
-                {
-                    miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new HeadBallGame(GraphicsDevice);
-                    miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                }
-            }
+            miniGames = new List<MiniGameContext>();
+
+            /*
+            context = new MiniGameContext();
+            context.game = new PlatformerGame(GraphicsDevice);
+            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+            miniGames.Add(context);
+
+            context = new MiniGameContext();
+            context.game = new SpaceGame(GraphicsDevice);
+            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+            miniGames.Add(context);
+
+            context = new MiniGameContext();
+            context.game = new HeadBallGame(GraphicsDevice);
+            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+            miniGames.Add(context);
+            */
         }
 
         /// <summary>
@@ -122,6 +141,64 @@ namespace PurpleCorgi
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+        }
+
+        private void UpdateInit(GameTime gameTime)
+        {
+            gameState = MetaGameState.Lobby;
+        }
+
+        private void UpdateLobby(GameTime gameTime)
+        {
+            //prepare the game for running
+            {
+                miniGames = new List<MiniGameContext>();
+                addMiniGameTimer = 0;
+                gameState = MetaGameState.Running;
+            }
+        }
+
+        private void UpdateRunning(GameTime gameTime)
+        {
+            addMiniGameTimer += gameTime.ElapsedGameTime.Milliseconds;
+            if (miniGames.Count == 0 && addMiniGameTimer > 0)
+            {
+                MiniGameContext context = new MiniGameContext();
+                context.game = new PaddleMiniGame(GraphicsDevice);
+                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                miniGames.Add(context);
+            }
+            else if (miniGames.Count == 1 && addMiniGameTimer > addSecondMiniGameDuration)
+            {
+                MiniGameContext context = new MiniGameContext();
+                context.game = new SpaceGame(GraphicsDevice);
+                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                miniGames.Add(context);
+            }
+            else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration)
+            {
+                MiniGameContext context = new MiniGameContext();
+                context.game = new HeadBallGame(GraphicsDevice);
+                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                miniGames.Add(context);
+            }
+            else if (miniGames.Count == 3 && addMiniGameTimer > addFourthMiniGameDuration)
+            {
+                MiniGameContext context = new MiniGameContext();
+                context.game = new PlatformerGame(GraphicsDevice);
+                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                miniGames.Add(context);
+            }
+
+            for (int i = 0; i < miniGames.Count; i++)
+            {
+                miniGames[i].game.Update(gameTime);
+            }
+        }
+
+        private void UpdateLose(GameTime gameTime)
+        {
+            //
         }
 
         /// <summary>
@@ -135,9 +212,20 @@ namespace PurpleCorgi
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            for (int i = 0; i < 4; i++)
+            switch (gameState)
             {
-                miniGames[i].game.Update(gameTime);
+                case MetaGameState.Init:
+                    UpdateInit(gameTime);
+                    break;
+                case MetaGameState.Lobby:
+                    UpdateLobby(gameTime);
+                    break;
+                case MetaGameState.Running:
+                    UpdateRunning(gameTime);
+                    break;
+                case MetaGameState.PlayerLose:
+                    UpdateLose(gameTime);
+                    break;
             }
 
             base.Update(gameTime);
@@ -152,15 +240,16 @@ namespace PurpleCorgi
             GraphicsDevice.Clear(Color.White);
       
             // render frames for each mini game
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < miniGames.Count; i++)
             {
                 miniGames[i].game.Render(miniGames[i].canvas);
             }
 
             // render mini games to screen
             GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Salmon);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < miniGames.Count; i++)
             {
                 spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
             }
