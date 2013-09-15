@@ -58,9 +58,9 @@ namespace PurpleCorgi
 
             gameState = MiniGameState.Initialized;
 
-            physicsWorld = new World(new Vector2(0, 1.5f));
+            physicsWorld = new World(new Vector2(0, 0f));
             Random rand = new Random(DateTime.Now.Ticks.GetHashCode());
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Body body = BodyFactory.CreateCircle(physicsWorld, targetRadius * pixelToUnit, 1000f);
                 body.BodyType = BodyType.Static;
@@ -73,6 +73,9 @@ namespace PurpleCorgi
             paddle.Position = new Vector2(GameConstants.MiniGameCanvasWidth / 2 * pixelToUnit, (GameConstants.MiniGameCanvasHeight+20) * pixelToUnit);
             paddle.SleepingAllowed = false;
             paddle.Restitution = 1.0f;
+            paddle.IgnoreGravity = true;
+            paddle.Mass = 10000000;
+            paddle.Friction = 0;
 
             wallLeft = BodyFactory.CreateRectangle(physicsWorld, 16 * pixelToUnit, GameConstants.MiniGameCanvasHeight * pixelToUnit, 1000f);
             wallLeft.BodyType = BodyType.Static;
@@ -105,7 +108,7 @@ namespace PurpleCorgi
             ball.AngularDamping = 1.0f;
             ball.FixedRotation = true;
             ball.Friction = 0;
-            float speed = 12;
+            float speed = 8;
             float theta = (float)(Math.PI / 4 + new Random().NextDouble() * Math.PI / 2);
             float x = (float)Math.Cos(theta) * speed;
             float y = (float)-Math.Sin(theta) * speed;
@@ -147,7 +150,7 @@ namespace PurpleCorgi
             float x = (float)(ein.UserX / .5) * (GameConstants.MiniGameCanvasWidth/2.0f) + (GameConstants.MiniGameCanvasWidth) / 2;
             paddle.Position = new Vector2(x * pixelToUnit, paddle.Position.Y);
 
-            if (!win && ball.Position.Y >= GameConstants.MiniGameCanvasHeight)
+            if (!win && ball.Position.Y*unitToPixel >= GameConstants.MiniGameCanvasHeight)
             {
                 lose = true;
             }

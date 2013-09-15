@@ -133,7 +133,7 @@ namespace PurpleCorgi
             g4 = new MiniGameContext();
             peak_Sprite = Content.Load<Texture2D>("peaktit");
 
-            g1.game = new Kardashian(GraphicsDevice);
+            g1.game = new BrickMiniGame(GraphicsDevice);
             g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
             g2.game = new SpaceGame(GraphicsDevice);
