@@ -38,6 +38,7 @@ namespace PurpleCorgi
         public static Texture2D hand_open_sprite; 
         public static Texture2D spaceSheet;
         public static Texture2D tutorialFrames;
+        public static Texture2D handCursor;
 
         public static SpriteFont SegoeUIMono24 = null;
         public static SpriteFont SegoeUIMono72 = null;
@@ -46,12 +47,15 @@ namespace PurpleCorgi
 
         private MetaGameState gameState = MetaGameState.Init;
         public static Kinect ein;
+
+        private bool lobbyHandClosed = false;
+
         public static int score;
 
         // running logic
         private float addMiniGameTimer;
-        private const float addSecondMiniGameDuration = 20000f;
-        private const float addThirdMiniGameDuration = 40000f;
+        private const float addSecondMiniGameDuration = 10000f;
+        private const float addThirdMiniGameDuration = 20000f;
         private const float addFourthMiniGameDuration = 9000000000000000000f;
         //end running logic
 
@@ -127,6 +131,7 @@ namespace PurpleCorgi
             tutorialFrames = Content.Load<Texture2D>("tutorialFrames");
             SegoeUIMono24 = Content.Load<SpriteFont>("segoe24");
             SegoeUIMono72 = Content.Load<SpriteFont>("segoe72");
+            handCursor = Content.Load<Texture2D>("hands");
 
             BlackAndWhite = Content.Load<Effect>("BlackAndWhite");
 
@@ -220,15 +225,28 @@ namespace PurpleCorgi
             Lobby.Pointer.X = (int)(ein.RightHand.Pos.X * GameConstants.MiniGameCanvasWidth);
             Lobby.Pointer.Y = (int)(ein.RightHand.Pos.Y * GameConstants.MiniGameCanvasHeight);
 
-            if (Rectangle.Intersect(Lobby.Box1, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            bool thing = ein.RightHand.Gripped;
+            bool thing2 = ein.RightHand.Released;
+            
+            if (thing)
+            {
+                lobbyHandClosed = true;
+            }
+
+            if (thing2)
+            {
+                lobbyHandClosed = false;
+            }
+
+            if (Rectangle.Intersect(Lobby.Box1, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && lobbyHandClosed))
             {
                 Lobby.Difficulty = 1;
             }
-            else if (Rectangle.Intersect(Lobby.Box2, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            else if (Rectangle.Intersect(Lobby.Box2, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && lobbyHandClosed))
             {
                 Lobby.Difficulty = 2;
             }
-            else if (Rectangle.Intersect(Lobby.Box3, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            else if (Rectangle.Intersect(Lobby.Box3, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && lobbyHandClosed))
             {
                 Lobby.Difficulty = 3;
             }
@@ -238,7 +256,9 @@ namespace PurpleCorgi
                 gameState = MetaGameState.Lobby;
             }
 
-            Lobby.prevFrameGrabbing = ein.RightHand.Gripped;
+            Console.WriteLine(lobbyHandClosed);
+
+            Lobby.prevFrameGrabbing = lobbyHandClosed;
 
         }
 
@@ -406,7 +426,7 @@ namespace PurpleCorgi
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Box3, Color.Green);
                 spriteBatch.DrawString(Game1.SegoeUIMono24, "Hard\nThree Games", new Vector2(Lobby.Box3.X, Lobby.Box3.Y) + new Vector2(8), Color.White);
 
-                spriteBatch.Draw(Game1.WhitePixel, Lobby.Pointer, new Color(1, 1, 1, 0.5f));
+                spriteBatch.Draw(Game1.handCursor, Lobby.Pointer, new Rectangle((lobbyHandClosed ? 150 : 0), 0, 150, 150), Color.White);
                 
                 spriteBatch.End();
             }
