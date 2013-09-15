@@ -331,9 +331,9 @@ namespace PurpleCorgi
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Box1, Color.Red);
                 spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nOne Game", new Vector2(Lobby.Box1.X, Lobby.Box1.Y) + new Vector2(8), Color.White);
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Box2, Color.Blue);
-                spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nTwo Games", new Vector2(Lobby.Box2.X, Lobby.Box2.Y) + new Vector2(8), Color.White);
+                spriteBatch.DrawString(Game1.SegoeUIMono24, "Medium\nTwo Games", new Vector2(Lobby.Box2.X, Lobby.Box2.Y) + new Vector2(8), Color.White);
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Box3, Color.Green);
-                spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nThree Games", new Vector2(Lobby.Box3.X, Lobby.Box3.Y) + new Vector2(8), Color.White);
+                spriteBatch.DrawString(Game1.SegoeUIMono24, "Hard\nThree Games", new Vector2(Lobby.Box3.X, Lobby.Box3.Y) + new Vector2(8), Color.White);
 
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Pointer, new Color(1, 1, 1, 0.5f));
                 
