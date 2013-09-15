@@ -35,8 +35,7 @@ namespace PurpleCorgi
             this.graphicsDevice = graphicsDevice;
             sb = new SpriteBatch(graphicsDevice);
 
-            ein = new Kinect(0, 0);
-            ein.Init();
+            ein = Game1.ein;
             resetDisplay();
         }
 

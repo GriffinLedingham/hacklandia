@@ -55,8 +55,7 @@ namespace PurpleCorgi
         {
             this.graphicsDevice = graphicsDevice;
 
-            ein = new Kinect(100, 100);
-            ein.Init();
+            ein = Game1.ein;
 
             if ((new Random()).Next() % 2 == 0)
             {

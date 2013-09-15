@@ -24,7 +24,6 @@ namespace PurpleCorgi
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Kinect ein = new Kinect(0, 0);
         private static Texture2D whitePixel = null;
         public static Texture2D WhitePixel { get { return whitePixel; } }
 
@@ -46,7 +45,7 @@ namespace PurpleCorgi
         public static Effect BlackAndWhite = null;
 
         private MetaGameState gameState = MetaGameState.Init;
-
+        public static Kinect ein;
         public static int score;
 
         // running logic
@@ -89,7 +88,8 @@ namespace PurpleCorgi
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-
+            ein = new Kinect(0, 0);
+            ein.Init();
             graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
             graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
@@ -200,7 +200,7 @@ namespace PurpleCorgi
             while(true){
                 game = PureRandomMiniGameHelper();
                 int type = TypeOfGame(game);
-                if (type != 5) continue; 
+                if (type == 5) continue; 
                 bool conflict = false;
                 foreach(MiniGameContext m in miniGames){
                     if(type == TypeOfGame(m.game)){

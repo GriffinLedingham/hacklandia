@@ -14,63 +14,58 @@ using Corgie;
 
 namespace PurpleCorgi
 {
-    class HeadBallGame : MiniGame
+    class PinballMiniGame : MiniGame
     {
         private GraphicsDevice graphicsDevice;
         private SpriteBatch sb;
 
-        private float paddle_width = 256;
-        private float paddle_height = 16;
-        private float ball_radius = 8;
+        private int ball_radius = 16;
 
-        const float unitToPixel = 100.0f;
+        const float unitToPixel = 500;
         const float pixelToUnit = 1 / unitToPixel;
 
         private MiniGameState gameState;
 
         private World physicsWorld;
-        private Body paddle;
-        private Vector2 paddle_size;
+        private Body wallLeft;
+        private Body wallRight;
+        private Body wallTop;
+        private Body paddleLeft;
+        private Body paddleRight;
         private Body ball;
-
+        private Vector2 paddleSize;
         private Texture2D circleTexture;
 
         private Kinect ein;
 
-        public static bool ShowedTutorial = false;
-        private float tutorialTimer;
-        private const float tutorialDuration = 3000f;
-        private bool win, lost = false;
-        public void Nuke()
-        {
-            ein.Nuke();
-        }
-        float winTimer = 0.0f;
-
-        public HeadBallGame(GraphicsDevice graphicsDevice)
+        public PinballMiniGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
             sb = new SpriteBatch(graphicsDevice);
 
-            ein = Game1.ein;
+            ein = new Kinect(0, 0);
+            ein.Init();
 
-            circleTexture = CreateCircle(8, graphicsDevice);
+            circleTexture = CreateCircle(ball_radius, graphicsDevice);
 
             gameState = MiniGameState.Initialized;
 
-            physicsWorld = new World(new Vector2(0, 0.8f));
-            
+            physicsWorld = new World(new Vector2(0, .982f));
+            paddleSize = new Vector2(300, 16);
+            paddleLeft = BodyFactory.CreateRectangle(physicsWorld, paddleSize.X * 2 * pixelToUnit, paddleSize.Y * pixelToUnit, 1000f);
+            paddleLeft.BodyType = BodyType.Dynamic;
+            paddleLeft.Position = new Vector2(8 * pixelToUnit, (GameConstants.MiniGameCanvasHeight - 100) * pixelToUnit);
+            paddleLeft.LocalCenter = new Vector2(0, 0);
+            paddleLeft.SleepingAllowed = false;
+            paddleLeft.Restitution = 1.0f;
+            paddleLeft.IgnoreGravity = true;
 
-            paddle = BodyFactory.CreateRectangle(physicsWorld, paddle_width * pixelToUnit, paddle_height * pixelToUnit, 1000f);
-            paddle.BodyType = BodyType.Static;
-            paddle.Position = new Vector2(320 * pixelToUnit, 240 * pixelToUnit);
-            paddle_size = new Vector2(paddle_width * pixelToUnit, paddle_height * pixelToUnit);
-            paddle.Rotation = 0;
-
-            ball = BodyFactory.CreateCircle(physicsWorld, ball_radius * pixelToUnit, 1000f);
+ 
+            ball = BodyFactory.CreateCircle(physicsWorld, (ball_radius) * pixelToUnit, 1000f);
             ball.BodyType = BodyType.Dynamic;
-            ball.Position = new Vector2(320 * pixelToUnit, 100 * pixelToUnit);
+            ball.Position = new Vector2(100 * pixelToUnit, 100 * pixelToUnit);
+            ball.Restitution = 1.0f;
             ball.SleepingAllowed = false;
         }
 
@@ -80,28 +75,6 @@ namespace PurpleCorgi
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
-            }
-            if (!ShowedTutorial)
-            {
-                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
-
-                if (tutorialTimer > tutorialDuration)
-                {
-                    ShowedTutorial = true;
-                }
-
-                return;
-            }
-            winTimer += gameTime.ElapsedGameTime.Milliseconds;
-
-            if (winTimer > 10000)
-            {
-                win = true;
-            }
-
-            if (ball.Position.Y*unitToPixel > GameConstants.MiniGameCanvasHeight)
-            {
-                lost = true;
             }
 
             KeyboardState ks = Keyboard.GetState();
@@ -113,32 +86,36 @@ namespace PurpleCorgi
                 ball.LinearVelocity = Vector2.Zero;
             }
 
-            /*
+
             if (ks.IsKeyDown(Keys.A))
             {
-                paddle.Rotation += 0.01f;
+                paddleRight.Rotation += 0.05f;
+                paddleLeft.Rotation -= 0.05f;
             }
             else if (ks.IsKeyDown(Keys.D))
             {
-                paddle.Rotation -= 0.01f;
+                paddleRight.Rotation -= 0.05f;
+                paddleLeft.Rotation += 0.05f;
             }
-             */
+            
 
-
+            
             //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
 
             //paddle.Rotation = -ein.RightHandAngle;
-            if (Math.Abs(paddle.Rotation - (-1 * ein.HeadNormAngle)) > 0.025f)
+            /*
+            if (Math.Abs(paddle.Rotation - (-1 * ein.RHRSAngle)) > 0.025f)
             {
-                if (paddle.Rotation < (-1 * ein.HeadNormAngle))
+                if (paddle.Rotation < (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation += 0.051f;
                 }
-                else if (paddle.Rotation > (-1 * ein.HeadNormAngle))
+                else if (paddle.Rotation > (-1 * ein.RHRSAngle))
                 {
                     paddle.Rotation -= 0.051f;
                 }
             }
+             * */
 
             // Simulate physics.
             physicsWorld.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -148,34 +125,32 @@ namespace PurpleCorgi
         {
             graphicsDevice.SetRenderTarget(canvas);
             graphicsDevice.Clear(Color.White);
-            Vector2 paddle_scale = new Vector2(paddle_size.X * unitToPixel, paddle_size.Y * unitToPixel);
 
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            sb.Draw(Game1.WhitePixel, paddle.Position * unitToPixel, null, Color.Black, paddle.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), paddle_scale, SpriteEffects.None, 0);
-            sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Black, ball.Rotation, new Vector2(16) / 2, new Vector2(1), SpriteEffects.None, 0.0f);
-
-            if (!ShowedTutorial)
-            {
-                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 900, 300, 300), Color.White);
-            }
-            
+            // Render left and paddle
+            sb.Draw(Game1.WhitePixel,
+                paddleLeft.Position * unitToPixel,
+                null, Color.Black,
+                paddleLeft.Rotation,
+                new Vector2(0f, .5f),
+                paddleSize,
+                SpriteEffects.None,
+                0);
+            sb.Draw(Game1.WhitePixel,
+                paddleRight.Position * unitToPixel,
+                null, Color.Black,
+                paddleRight.Rotation,
+                new Vector2(1f, .5f),
+                paddleSize,
+                SpriteEffects.None,
+                0);
+            sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Green, ball.Rotation, new Vector2(ball_radius), new Vector2(1f), SpriteEffects.None, 0.0f);
             sb.End();
-
-            if (win)
-                graphicsDevice.Clear(Color.Red);
-
-            if (lost)
-                graphicsDevice.Clear(Color.Black);
         }
 
         public MiniGameState GetState()
         {
-            if (win)
-                return MiniGameState.Win;
-            else if (lost)
-                return MiniGameState.Lose;
-            else
-                return MiniGameState.Running;
+            return gameState;
         }
 
         public Texture2D CreateCircle(int radius, GraphicsDevice gd)

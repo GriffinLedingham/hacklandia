@@ -73,8 +73,7 @@ namespace PurpleCorgi
 
             random = new Random();
 
-            ein = new Kinect(100, 100);
-            ein.Init();
+            ein = Game1.ein;
 
             height = 50;
             width = 50;

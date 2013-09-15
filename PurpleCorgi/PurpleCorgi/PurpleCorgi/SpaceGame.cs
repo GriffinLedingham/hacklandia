@@ -239,8 +239,7 @@ namespace PurpleCorgi
                 stars[i] = new Star(Game1.GameRandom.Next() % 3000);
             }
 
-            ein = new Kinect(0, 0);
-            ein.Init();
+            ein = Game1.ein;
 
             aliens = new List<Alien>();
             bullets = new List<PlayerBullet>();

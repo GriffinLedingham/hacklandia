@@ -31,8 +31,7 @@ namespace PurpleCorgi
 
             pointerPosition = new Vector2(GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
-            ein = new Kinect(0, 0);
-            ein.Init();
+            ein = Game1.ein;
         }
 
         public void Update(GameTime gameTime)

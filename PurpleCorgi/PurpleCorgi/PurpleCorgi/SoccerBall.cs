@@ -48,8 +48,7 @@ namespace PurpleCorgi
 
             sb = new SpriteBatch(graphicsDevice);
 
-            ein = new Kinect(100, 100);
-            ein.Init();
+            ein = Game1.ein;
 
             circleTexture = CreateCircle(8, graphicsDevice);
 

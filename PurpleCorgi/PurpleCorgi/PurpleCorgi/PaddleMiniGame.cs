@@ -57,8 +57,7 @@ namespace PurpleCorgi
 
             tutorialTimer = 0;
 
-            ein = new Kinect(0, 0);
-            ein.Init();
+            ein = Game1.ein;
 
             circleTexture = CreateCircle(8, graphicsDevice);
 
