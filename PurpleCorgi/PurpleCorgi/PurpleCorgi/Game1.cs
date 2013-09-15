@@ -37,6 +37,7 @@ namespace PurpleCorgi
         public static Texture2D spaceSheet;
 
         public static SpriteFont SegoeUIMono24 = null;
+        public static SpriteFont SegoeUIMono72 = null;
 
         public static Effect BlackAndWhite = null;
 
@@ -119,6 +120,7 @@ namespace PurpleCorgi
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
             corgi_Sprite = Content.Load<Texture2D>("corgi");
             SegoeUIMono24 = Content.Load<SpriteFont>("segoe24");
+            SegoeUIMono72 = Content.Load<SpriteFont>("segoe72");
 
             BlackAndWhite = Content.Load<Effect>("BlackAndWhite");
 
@@ -202,11 +204,20 @@ namespace PurpleCorgi
 
             Lobby.User.X = (int)(((ein.UserX / .5f) * GameConstants.MiniGameCanvasWidth) + GameConstants.MiniGameCanvasWidth);
             Lobby.User.Y = (int)(((ein.UserZ - 0.9f) * GameConstants.MiniGameCanvasHeight));
-                
-            
+
+
             if (Rectangle.Intersect(Lobby.User, Lobby.Landing).Height > 0)
             {
-                Lobby.READY = true;
+                Lobby.landingHoverTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+                if (Lobby.landingHoverTimer > Lobby.landingHoverDuration)
+                {
+                    Lobby.READY = true;
+                }
+            }
+            else
+            {
+                Lobby.landingHoverTimer = 0;
             }
 
 
@@ -325,16 +336,35 @@ namespace PurpleCorgi
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Pointer, new Color(1, 1, 1, 0.5f));
                 
                 spriteBatch.End();
-
             }
             else if (gameState == MetaGameState.Lobby)
             {
                 GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Clear(Color.Salmon);
+                GraphicsDevice.Clear(Color.Black);
 
-                spriteBatch.Begin();
-                spriteBatch.Draw(Game1.WhitePixel, Lobby.User, Color.Black);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+
+                spriteBatch.DrawString(SegoeUIMono24, "Align yourself into the center of the floor in front of the Kinect", new Vector2(75), Color.White);
+
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Landing, Color.Red);
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.User, new Color(1, 1, 1, 0.5f));
+
+                if (Lobby.landingHoverTimer > 0)
+                {
+                    if (Lobby.landingHoverTimer / Lobby.landingHoverDuration < 0.333f)
+                    {
+                        spriteBatch.DrawString(Game1.SegoeUIMono72, "3", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) + Game1.SegoeUIMono72.MeasureString("3")) / 2 - new Vector2(0, 100), Color.White);
+                    }
+                    else if (Lobby.landingHoverTimer / Lobby.landingHoverDuration < 0.6666f)
+                    {
+                        spriteBatch.DrawString(Game1.SegoeUIMono72, "2", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) + Game1.SegoeUIMono72.MeasureString("2")) / 2 - new Vector2(0, 100), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(Game1.SegoeUIMono72, "1", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) + Game1.SegoeUIMono72.MeasureString("1")) / 2 - new Vector2(0, 100), Color.White);
+                    }
+
+                }
 
                 spriteBatch.End();
             }

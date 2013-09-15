@@ -22,6 +22,9 @@ namespace PurpleCorgi
         public static Rectangle User = new Rectangle(10, 10, 100, 100);
         public static Rectangle Landing = new Rectangle(GameConstants.GameResolutionWidth / 2 - 150, GameConstants.GameResolutionHeight / 2 - 150, 300, 300);
 
+        public static float landingHoverTimer = 0;
+        public static float landingHoverDuration = 3000f;
+
         public static bool READY = false;
 
     }
