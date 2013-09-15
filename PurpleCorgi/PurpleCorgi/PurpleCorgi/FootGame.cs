@@ -34,7 +34,14 @@ namespace PurpleCorgi
 
         private Corgi2 lastForearm = null;
 
+        private bool footInProgress = false;
+        private string foot = "";
 
+        float initialTime, holdUpTime = 0.0f;
+
+        bool win, lose = false;
+
+        Random random;
 
         public FootGame(GraphicsDevice graphicsDevice)
         {
@@ -42,6 +49,15 @@ namespace PurpleCorgi
 
             ein = new Kinect(100, 100);
             ein.Init();
+
+            if ((new Random()).Next() % 2 == 0)
+            {
+                foot = "left";
+            }
+            else
+            {
+                foot = "right";
+            }
 
 
             sb = new SpriteBatch(graphicsDevice);
@@ -54,38 +70,73 @@ namespace PurpleCorgi
 
         public void Update(GameTime GameTime)
         {
+
+            //3 seconds to lift foot
+            //hold left foot up
+
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
             }
 
             
-            if (lastForearm != null)
-            {
-                if ((ein.LHLEVector.Y - lastForearm.Y) > .05f)
-                {
-
-                }
-            }
-            lastForearm = ein.LHLEVector;
 
             
+
+            if (!ein.LeftLegRaised && !ein.RightLegRaised || (foot == "right" && !ein.RightLegRaised && ein.LeftLegRaised) || (foot == "left" && ein.RightLegRaised && !ein.LeftLegRaised))
+            {
+                holdUpTime = 0.0f;
+                initialTime += GameTime.ElapsedGameTime.Milliseconds;
+                if (footInProgress)
+                    lose = true;
+            }
+            else
+            {
+                initialTime = 0.0f;
+                holdUpTime += GameTime.ElapsedGameTime.Milliseconds;
+                footInProgress = true;
+            }
+
+            if (initialTime > 5000)
+            {
+                lose = true;
+            }
+
+            if (holdUpTime > 10000)
+            {
+                win = true;
+            }
+
+                
         }
 
         public void Render(RenderTarget2D canvas)
         {
-           
-
             graphicsDevice.SetRenderTarget(canvas);
             graphicsDevice.Clear(backgroundColor);
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+            sb.DrawString(Game1.SegoeUIMono24, "Lift " + foot + "for x seconds", new Vector2(100, 100), Color.Red);
             sb.End();
-        }
 
+            if (win)
+            {
+                graphicsDevice.Clear(Color.Red);
+            }
+
+            if (lose)
+            {
+                graphicsDevice.Clear(Color.Black);
+            }
+        }
 
         public MiniGameState GetState()
         {
-            return gameState;
+            if (win)
+                return MiniGameState.Win;
+            else if (lose)
+                return MiniGameState.Lose;
+            else
+                return MiniGameState.Running;
         }
     }
 }

@@ -27,5 +27,8 @@ namespace PurpleCorgi
 
         public static bool READY = false;
 
+        public static Rectangle LoseLanding = new Rectangle((GameConstants.GameResolutionWidth / 2), 0, 400, 200);
+        public static Rectangle LosePointer = new Rectangle(50, 50, 64, 64);
+
     }
 }

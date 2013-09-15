@@ -133,7 +133,7 @@ namespace PurpleCorgi
             g4 = new MiniGameContext();
             peak_Sprite = Content.Load<Texture2D>("peaktit");
 
-            g1.game = new BrickMiniGame(GraphicsDevice);
+            g1.game = new FootGame(GraphicsDevice);
             g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
             g2.game = new SpaceGame(GraphicsDevice);
@@ -237,20 +237,35 @@ namespace PurpleCorgi
             addMiniGameTimer += gameTime.ElapsedGameTime.Milliseconds;
             if (miniGames.Count == 0 && addMiniGameTimer > 0)
             {
-                
-                miniGames.Add(g1);
+                MiniGameContext g = new MiniGameContext();
+                g.game = PureRandomMiniGame();
+                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+                miniGames.Add(g);
             }
             else if (miniGames.Count == 1 && addMiniGameTimer > addSecondMiniGameDuration && Lobby.Difficulty > 1)
             {
-                miniGames.Add(g2);
+                MiniGameContext g = new MiniGameContext();
+                g.game = PureRandomMiniGame();
+                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+                miniGames.Add(g);
             }
             else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration && Lobby.Difficulty > 2)
             {
-                 miniGames.Add(g3);
+                MiniGameContext g = new MiniGameContext();
+                g.game = PureRandomMiniGame();
+                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+                miniGames.Add(g);
             }
             else if (miniGames.Count == 3 && addMiniGameTimer > addFourthMiniGameDuration)
             {
-                miniGames.Add(g4);
+                MiniGameContext g = new MiniGameContext();
+                g.game = PureRandomMiniGame();
+                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+                miniGames.Add(g);
             }
 
             for (int i = 0; i < miniGames.Count; i++)
@@ -273,7 +288,18 @@ namespace PurpleCorgi
 
         private void UpdateLose(GameTime gameTime)
         {
-            //
+            Lobby.LosePointer.X = (int)(((ein.UserX / .5f) * GameConstants.MiniGameCanvasWidth) + GameConstants.MiniGameCanvasWidth);
+            Lobby.LosePointer.Y = (int)(((ein.UserZ - 0.9f) * GameConstants.MiniGameCanvasHeight));
+
+            if (Rectangle.Intersect(Lobby.LosePointer, Lobby.LoseLanding).Height > 0)
+            {
+                gameState = MetaGameState.Init;
+                miniGames.Clear();
+                Lobby.READY = false;
+                Lobby.Difficulty = 0;
+                Lobby.landingHoverTimer = 0;
+                //score = 0;
+            }
         }
 
         /// <summary>
@@ -397,6 +423,12 @@ namespace PurpleCorgi
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
                 spriteBatch.Draw(Game1.whitePixel, new Rectangle((GameConstants.GameResolutionWidth / 2 - 200), (GameConstants.GameResolutionHeight / 2 - 100), 400, 200), Color.Blue);
                 spriteBatch.DrawString(SegoeUIMono24, "LOSE", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("LOSE")) / 2, Color.Cyan);
+
+                spriteBatch.Draw(Game1.whitePixel, Lobby.LosePointer, Color.Yellow);
+                spriteBatch.Draw(Game1.whitePixel, Lobby.LoseLanding, Color.White);
+                spriteBatch.DrawString(SegoeUIMono24, "Stand in me to restart!", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("Stand in me to restart!")) / 2 + new Vector2(200, -200), Color.Black);
+
+
                 spriteBatch.End();
             }
 
