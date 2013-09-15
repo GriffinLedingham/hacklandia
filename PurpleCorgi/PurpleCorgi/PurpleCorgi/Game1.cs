@@ -36,6 +36,7 @@ namespace PurpleCorgi
         public static Texture2D corgi_Sprite;
         public static Texture2D peak_Sprite; 
         public static Texture2D spaceSheet;
+        public static Texture2D tutorialFrames;
 
         public static SpriteFont SegoeUIMono24 = null;
         public static SpriteFont SegoeUIMono72 = null;
@@ -43,6 +44,8 @@ namespace PurpleCorgi
         public static Effect BlackAndWhite = null;
 
         private MetaGameState gameState = MetaGameState.Init;
+
+        public static int score;
 
         // running logic
         private float addMiniGameTimer;
@@ -120,6 +123,7 @@ namespace PurpleCorgi
 
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
             corgi_Sprite = Content.Load<Texture2D>("corgi");
+            tutorialFrames = Content.Load<Texture2D>("tutorialFrames");
             SegoeUIMono24 = Content.Load<SpriteFont>("segoe24");
             SegoeUIMono72 = Content.Load<SpriteFont>("segoe72");
 
@@ -136,7 +140,7 @@ namespace PurpleCorgi
             g1.game = new FootGame(GraphicsDevice);
             g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
-            g2.game = new SpaceGame(GraphicsDevice);
+            g2.game = new PlatformerGame(GraphicsDevice);
             g2.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
             g3.game = new TestMiniGame(GraphicsDevice);
@@ -227,6 +231,7 @@ namespace PurpleCorgi
                 miniGames = new List<MiniGameContext>();
                 addMiniGameTimer = 0;
                 gameState = MetaGameState.Running;
+                score = 0;
             }
         }
 
@@ -259,14 +264,6 @@ namespace PurpleCorgi
 
                 miniGames.Add(g);
             }
-            else if (miniGames.Count == 3 && addMiniGameTimer > addFourthMiniGameDuration)
-            {
-                MiniGameContext g = new MiniGameContext();
-                g.game = PureRandomMiniGame();
-                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-
-                miniGames.Add(g);
-            }
 
             for (int i = 0; i < miniGames.Count; i++)
             {
@@ -277,6 +274,8 @@ namespace PurpleCorgi
             {
                 if (me.game.GetState() == MiniGameState.Win)
                 {
+                    score += 100;
+
                     me.game = PureRandomMiniGame();
                 }
                 else if (me.game.GetState() == MiniGameState.Lose)
@@ -372,7 +371,7 @@ namespace PurpleCorgi
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
-                spriteBatch.DrawString(SegoeUIMono24, "Align yourself into the center of the floor in front of the Kinect", new Vector2(75), Color.White);
+                spriteBatch.DrawString(SegoeUIMono24, "Align yourself in front of the Kinect", new Vector2(75), Color.White);
 
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.Landing, Color.Red);
                 spriteBatch.Draw(Game1.WhitePixel, Lobby.User, new Color(1, 1, 1, 0.5f));
@@ -400,34 +399,38 @@ namespace PurpleCorgi
             {
                 // render mini games to screen
                 GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Clear(Color.Salmon);
+                GraphicsDevice.Clear(Color.Black);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
                 for (int i = 0; i < miniGames.Count; i++)
                 {
                     spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
                 }
+
+                spriteBatch.DrawString(SegoeUIMono24, "Score: " + score, new Vector2(640, 360) + new Vector2(16), Color.White);
                 spriteBatch.End();
             }
             else if (gameState == MetaGameState.PlayerLose)
             {
                 // render mini games to screen
                 GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Clear(Color.Salmon);
+                GraphicsDevice.Clear(Color.Black);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, BlackAndWhite, Matrix.Identity);
                 for (int i = 0; i < miniGames.Count; i++)
                 {
                     spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
                 }
+
+                spriteBatch.DrawString(SegoeUIMono24, "Score: " + score, new Vector2(640, 360) + new Vector2(16), Color.White);
                 spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
                 spriteBatch.Draw(Game1.whitePixel, new Rectangle((GameConstants.GameResolutionWidth / 2 - 200), (GameConstants.GameResolutionHeight / 2 - 100), 400, 200), Color.Blue);
-                spriteBatch.DrawString(SegoeUIMono24, "LOSE", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("LOSE")) / 2, Color.Cyan);
+
+                spriteBatch.DrawString(SegoeUIMono24, "You lost!\nScore: " + score, (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("You lost!\nScore: " + score)) / 2, Color.Cyan);
 
                 spriteBatch.Draw(Game1.whitePixel, Lobby.LosePointer, Color.Yellow);
                 spriteBatch.Draw(Game1.whitePixel, Lobby.LoseLanding, Color.White);
                 spriteBatch.DrawString(SegoeUIMono24, "Stand in me to restart!", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("Stand in me to restart!")) / 2 + new Vector2(200, -200), Color.Black);
-
 
                 spriteBatch.End();
             }

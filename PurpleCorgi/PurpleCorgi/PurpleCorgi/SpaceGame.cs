@@ -272,7 +272,7 @@ namespace PurpleCorgi
                 aliens.Add(new Alien(this));
             }
 
-            if (killCount >= 10)
+            if (killCount >= 5)
             {
                 gameState = MiniGameState.Win;
             }
