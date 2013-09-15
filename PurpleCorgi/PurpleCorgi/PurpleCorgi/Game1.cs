@@ -24,7 +24,7 @@ namespace PurpleCorgi
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        Kinect ein = new Kinect(0, 0);
         private static Texture2D whitePixel = null;
         public static Texture2D WhitePixel { get { return whitePixel; } }
 
@@ -48,6 +48,8 @@ namespace PurpleCorgi
         private const float addThirdMiniGameDuration = 6000f;
         private const float addFourthMiniGameDuration = 9000f;
         //end running logic
+
+        MiniGameContext g1, g2, g3, g4;
 
         private enum MetaGameState
         {
@@ -97,7 +99,6 @@ namespace PurpleCorgi
         /// </summary>
         protected override void Initialize()
         {
-            Kinect ein = new Kinect(0, 0);
             ein.Init();
 
             base.Initialize();
@@ -122,6 +123,25 @@ namespace PurpleCorgi
             BlackAndWhite = Content.Load<Effect>("BlackAndWhite");
 
             miniGames = new List<MiniGameContext>();
+
+            g1 = new MiniGameContext();
+            g2 = new MiniGameContext();
+            g3 = new MiniGameContext();
+            g4 = new MiniGameContext();
+
+            g1.game = new PaddleMiniGame(GraphicsDevice);
+            g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+            g2.game = new SpaceGame(GraphicsDevice);
+            g2.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+            g3.game = new TestMiniGame(GraphicsDevice);
+            g3.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+            g4.game = new PlatformerGame(GraphicsDevice);
+            g4.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+
+
         }
 
         /// <summary>
@@ -151,49 +171,73 @@ namespace PurpleCorgi
 
         private void UpdateInit(GameTime gameTime)
         {
-            gameState = MetaGameState.Lobby;
+
+            Lobby.Pointer.X = (int)(ein.RightHand.Pos.X * GameConstants.MiniGameCanvasWidth);
+            Lobby.Pointer.Y = (int)(ein.RightHand.Pos.Y * GameConstants.MiniGameCanvasHeight);
+
+            if (Rectangle.Intersect(Lobby.Box1, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            {
+                Lobby.Difficulty = 1;
+            }
+            else if (Rectangle.Intersect(Lobby.Box2, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            {
+                Lobby.Difficulty = 2;
+            }
+            else if (Rectangle.Intersect(Lobby.Box3, Lobby.Pointer).Height > 0 && (!Lobby.prevFrameGrabbing && ein.RightHand.Gripped))
+            {
+                Lobby.Difficulty = 3;
+            }
+
+            if (Lobby.Difficulty != 0)
+            {
+                gameState = MetaGameState.Lobby;
+            }
+
+            Lobby.prevFrameGrabbing = ein.RightHand.Gripped;
+
         }
 
         private void UpdateLobby(GameTime gameTime)
         {
-            //prepare the game for running
+
+            Lobby.User.X = (int)(((ein.UserX / .5f) * GameConstants.MiniGameCanvasWidth) + GameConstants.MiniGameCanvasWidth);
+            Lobby.User.Y = (int)(((ein.UserZ - 0.9f) * GameConstants.MiniGameCanvasHeight));
+                
+            
+            if (Rectangle.Intersect(Lobby.User, Lobby.Landing).Height > 0)
             {
+                Lobby.READY = true;
+            }
+
+
+            if(Lobby.READY){
                 miniGames = new List<MiniGameContext>();
                 addMiniGameTimer = 0;
                 gameState = MetaGameState.Running;
             }
         }
 
+
+
         private void UpdateRunning(GameTime gameTime)
         {
             addMiniGameTimer += gameTime.ElapsedGameTime.Milliseconds;
             if (miniGames.Count == 0 && addMiniGameTimer > 0)
             {
-                MiniGameContext context = new MiniGameContext();
-                context.game = new PaddleMiniGame(GraphicsDevice);
-                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                miniGames.Add(context);
+                
+                miniGames.Add(g1);
             }
-            else if (miniGames.Count == 1 && addMiniGameTimer > addSecondMiniGameDuration)
+            else if (miniGames.Count == 1 && addMiniGameTimer > addSecondMiniGameDuration && Lobby.Difficulty > 1)
             {
-                MiniGameContext context = new MiniGameContext();
-                context.game = new SpaceGame(GraphicsDevice);
-                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                miniGames.Add(context);
+                miniGames.Add(g2);
             }
-            else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration)
+            else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration && Lobby.Difficulty > 2)
             {
-                MiniGameContext context = new MiniGameContext();
-                context.game = new TestMiniGame(GraphicsDevice);
-                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                miniGames.Add(context);
+                 miniGames.Add(g3);
             }
             else if (miniGames.Count == 3 && addMiniGameTimer > addFourthMiniGameDuration)
             {
-                MiniGameContext context = new MiniGameContext();
-                context.game = new PlatformerGame(GraphicsDevice);
-                context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-                miniGames.Add(context);
+                miniGames.Add(g4);
             }
 
             for (int i = 0; i < miniGames.Count; i++)
@@ -265,11 +309,34 @@ namespace PurpleCorgi
 
             if (gameState == MetaGameState.Init)
             {
-                //
+                // render mini games to screen
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(Color.Black);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.Box1, Color.Red);
+                spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nOne Game", new Vector2(Lobby.Box1.X, Lobby.Box1.Y) + new Vector2(8), Color.White);
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.Box2, Color.Blue);
+                spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nTwo Games", new Vector2(Lobby.Box2.X, Lobby.Box2.Y) + new Vector2(8), Color.White);
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.Box3, Color.Green);
+                spriteBatch.DrawString(Game1.SegoeUIMono24, "Easy\nThree Games", new Vector2(Lobby.Box3.X, Lobby.Box3.Y) + new Vector2(8), Color.White);
+
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.Pointer, new Color(1, 1, 1, 0.5f));
+                
+                spriteBatch.End();
+
             }
             else if (gameState == MetaGameState.Lobby)
             {
-                //
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(Color.Salmon);
+
+                spriteBatch.Begin();
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.User, Color.Black);
+                spriteBatch.Draw(Game1.WhitePixel, Lobby.Landing, Color.Red);
+
+                spriteBatch.End();
             }
             else if (gameState == MetaGameState.Running)
             {
