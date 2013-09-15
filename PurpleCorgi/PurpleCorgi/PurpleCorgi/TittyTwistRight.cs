@@ -238,8 +238,10 @@ namespace PurpleCorgi
             // TODO: Add your drawing code here
 
             //sb.Draw(PlainTextureLeft, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale, SpriteEffects.None, 0);
-            sb.Draw(PlainTextureRight, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
+            //sb.Draw(PlainTextureRight, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
             sb.Draw(PlainTexture, body3.Position * unitToPixel, null, Color.White, body3.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale3, SpriteEffects.None, 0);
+
+            sb.Draw(Game1.handCursor, new Rectangle((int)(body2.Position.X * unitToPixel) - 25, (int)(body2.Position.Y * unitToPixel) - 25, 50, 50), new Rectangle((rightGripped ? 150 : 0), 0, 150, 150), Color.White, 0.0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 0.5f);
 
             sb.End();
             if(win)
