@@ -36,6 +36,10 @@ namespace PurpleCorgi
         public static Texture2D corgi_Sprite; 
         public static Texture2D spaceSheet;
 
+        public static SpriteFont SegoeUIMono24 = null;
+
+        public static Effect BlackAndWhite = null;
+
         private MetaGameState gameState = MetaGameState.Init;
 
         // running logic
@@ -113,25 +117,11 @@ namespace PurpleCorgi
 
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
             corgi_Sprite = Content.Load<Texture2D>("corgi");
+            SegoeUIMono24 = Content.Load<SpriteFont>("segoe24");
+
+            BlackAndWhite = Content.Load<Effect>("BlackAndWhite");
 
             miniGames = new List<MiniGameContext>();
-
-            /*
-            context = new MiniGameContext();
-            context.game = new PlatformerGame(GraphicsDevice);
-            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-            miniGames.Add(context);
-
-            context = new MiniGameContext();
-            context.game = new SpaceGame(GraphicsDevice);
-            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-            miniGames.Add(context);
-
-            context = new MiniGameContext();
-            context.game = new HeadBallGame(GraphicsDevice);
-            context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-            miniGames.Add(context);
-            */
         }
 
         /// <summary>
@@ -141,6 +131,22 @@ namespace PurpleCorgi
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+        }
+
+        private MiniGame PureRandomMiniGame()
+        {
+            switch (GameRandom.Next() % 4)
+            {
+                case 0:
+                    return new SpaceGame(GraphicsDevice);
+                case 1:
+                    return new PaddleMiniGame(GraphicsDevice);
+                case 2:
+                    return new PlatformerGame(GraphicsDevice);
+                case 3:
+                default:
+                    return new TestMiniGame(GraphicsDevice);
+            }
         }
 
         private void UpdateInit(GameTime gameTime)
@@ -178,7 +184,7 @@ namespace PurpleCorgi
             else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration)
             {
                 MiniGameContext context = new MiniGameContext();
-                context.game = new HeadBallGame(GraphicsDevice);
+                context.game = new TestMiniGame(GraphicsDevice);
                 context.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 miniGames.Add(context);
             }
@@ -193,6 +199,18 @@ namespace PurpleCorgi
             for (int i = 0; i < miniGames.Count; i++)
             {
                 miniGames[i].game.Update(gameTime);
+            }
+
+            foreach (MiniGameContext me in miniGames)
+            {
+                if (me.game.GetState() == MiniGameState.Win)
+                {
+                    me.game = PureRandomMiniGame();
+                }
+                else if (me.game.GetState() == MiniGameState.Lose)
+                {
+                    gameState = MetaGameState.PlayerLose;
+                }
             }
         }
 
@@ -238,22 +256,50 @@ namespace PurpleCorgi
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.White);
-      
+
             // render frames for each mini game
             for (int i = 0; i < miniGames.Count; i++)
             {
                 miniGames[i].game.Render(miniGames[i].canvas);
             }
 
-            // render mini games to screen
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.Salmon);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
-            for (int i = 0; i < miniGames.Count; i++)
+            if (gameState == MetaGameState.Init)
             {
-                spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
+                //
             }
-            spriteBatch.End();
+            else if (gameState == MetaGameState.Lobby)
+            {
+                //
+            }
+            else if (gameState == MetaGameState.Running)
+            {
+                // render mini games to screen
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(Color.Salmon);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
+                for (int i = 0; i < miniGames.Count; i++)
+                {
+                    spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
+                }
+                spriteBatch.End();
+            }
+            else if (gameState == MetaGameState.PlayerLose)
+            {
+                // render mini games to screen
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(Color.Salmon);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, BlackAndWhite, Matrix.Identity);
+                for (int i = 0; i < miniGames.Count; i++)
+                {
+                    spriteBatch.Draw(miniGames[i].canvas, new Vector2(GameConstants.MiniGameCanvasWidth * (i % 2), GameConstants.MiniGameCanvasHeight * (i / 2)), Color.White);
+                }
+                spriteBatch.End();
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.Identity);
+                spriteBatch.Draw(Game1.whitePixel, new Rectangle((GameConstants.GameResolutionWidth / 2 - 200), (GameConstants.GameResolutionHeight / 2 - 100), 400, 200), Color.Blue);
+                spriteBatch.DrawString(SegoeUIMono24, "LOSE", (new Vector2(GameConstants.GameResolutionWidth, GameConstants.GameResolutionHeight) - SegoeUIMono24.MeasureString("LOSE")) / 2, Color.Cyan);
+                spriteBatch.End();
+            }
 
             base.Draw(gameTime);
         }
