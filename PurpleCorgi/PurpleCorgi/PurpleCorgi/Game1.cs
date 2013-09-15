@@ -33,7 +33,8 @@ namespace PurpleCorgi
 
         private List<MiniGameContext> miniGames;
 
-        public static Texture2D corgi_Sprite; 
+        public static Texture2D corgi_Sprite;
+        public static Texture2D peak_Sprite; 
         public static Texture2D spaceSheet;
 
         public static SpriteFont SegoeUIMono24 = null;
@@ -130,6 +131,7 @@ namespace PurpleCorgi
             g2 = new MiniGameContext();
             g3 = new MiniGameContext();
             g4 = new MiniGameContext();
+            peak_Sprite = Content.Load<Texture2D>("peaktit");
 
             g1.game = new PaddleMiniGame(GraphicsDevice);
             g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);

@@ -112,6 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TittyTwistRight.cs" />
     <Compile Include="FootGame.cs" />
     <Compile Include="HeadBallGame.cs" />
     <Compile Include="Kardashian.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="SpaceGame.cs" />
     <Compile Include="TestMiniGame.cs" />
     <Compile Include="TestMiniGriff.cs" />
+    <Compile Include="TittyTwist.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

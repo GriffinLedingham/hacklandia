@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurpleCorgi", "PurpleCorgi\PurpleCorgi\PurpleCorgi.csproj", "{2B59ECEB-FD46-4697-9B24-44F8C2B9D88C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurpleCorgiContent", "PurpleCorgi\PurpleCorgiContent\PurpleCorgiContent.contentproj", "{35C34968-BAD5-4A0E-A1F0-50A781F94DB6}"

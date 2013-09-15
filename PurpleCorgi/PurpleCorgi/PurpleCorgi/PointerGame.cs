@@ -60,7 +60,6 @@ namespace PurpleCorgi
                 {
                     Difficulty = 3;
                 }
-            
         }
 
         public void Render(RenderTarget2D canvas)
