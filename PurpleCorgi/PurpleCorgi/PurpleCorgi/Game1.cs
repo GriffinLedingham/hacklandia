@@ -161,9 +161,10 @@ namespace PurpleCorgi
             // TODO: Unload any non ContentManager content here
         }
 
-        private MiniGame PureRandomMiniGame()
-        {
-            switch (GameRandom.Next() % 4)
+
+                private MiniGame PureRandomMiniGameHelper(){
+            
+            switch (GameRandom.Next() % 10) 
             {
                 case 0:
                     return new SpaceGame(GraphicsDevice);
@@ -172,9 +173,53 @@ namespace PurpleCorgi
                 case 2:
                     return new PlatformerGame(GraphicsDevice);
                 case 3:
+                    return new PlatformerGame(GraphicsDevice);
+                case 4:
+                    return new PlatformerGame(GraphicsDevice);
+                case 5:
+                    return new PlatformerGame(GraphicsDevice);
+                case 6:
+                    return new PlatformerGame(GraphicsDevice);
+                case 7:
+                    return new PlatformerGame(GraphicsDevice);
+                case 8:
+                    return new PlatformerGame(GraphicsDevice);
                 default:
-                    return new TestMiniGame(GraphicsDevice);
+                    return new PaddleMiniGame(GraphicsDevice);
             }
+        }
+        private int TypeOfGame(MiniGame g) {
+            if(g is TittyTwist) return 1;
+            if(g is PlatformerGame) return 1;
+            if(g is TittyTwistRight) return 2;
+            if(g is PaddleMiniGame) return 2;
+            if(g is Kardashian) return 3;
+            if(g is BrickMiniGame) return 3;
+            if(g is HeadBallGame) return 4;
+            if(g is SpaceGame) return 5;
+            if(g is Color) return 2;
+            if(g is PaddleMiniGame) return 2;
+
+            return 0;
+        }
+
+          private MiniGame PureRandomMiniGame()
+        {
+            MiniGame game;
+            while(true){
+                game = PureRandomMiniGameHelper();
+                int type = TypeOfGame(game);
+                bool conflict = false;
+                foreach(MiniGameContext m in miniGames){
+                    if(type == TypeOfGame(m.game)){
+                        conflict = true;
+                        break;
+                    }
+                }
+                if(!conflict)
+                    break;
+            }
+            return game;
         }
 
         private void UpdateInit(GameTime gameTime)
