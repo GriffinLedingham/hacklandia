@@ -97,7 +97,7 @@ namespace PurpleCorgi
             graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
             graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
-            //graphics.ToggleFullScreen();
+            graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
