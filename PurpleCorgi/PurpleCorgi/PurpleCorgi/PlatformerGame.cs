@@ -135,7 +135,7 @@ namespace PurpleCorgi
             {
                 lost = true;
             }
-            else if (body.Position.X > GameConstants.MiniGameCanvasWidth)
+            else if (body.Position.X*unitToPixel > GameConstants.MiniGameCanvasWidth)
             {
                 win = true;
             }   

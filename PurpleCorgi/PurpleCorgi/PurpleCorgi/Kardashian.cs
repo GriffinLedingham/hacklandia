@@ -25,7 +25,7 @@ namespace PurpleCorgi
         const float pixelToUnit = 1 / unitToPixel;
 
         World world;
-        Texture2D PlainTexture;
+        Texture2D PlainTexture, GoalTexture;
 
         Vector2 Size, size, Size2, size2;
 
@@ -43,6 +43,8 @@ namespace PurpleCorgi
         private Random random;
 
         float winTimer = 0.0f;
+
+        int score = 0;
 
         private bool colliding = false;
 
@@ -77,6 +79,9 @@ namespace PurpleCorgi
             PlainTexture = new Texture2D(this.graphicsDevice, 1, 1);
             PlainTexture.SetData(new[] { Color.White });
 
+            GoalTexture = new Texture2D(this.graphicsDevice, 1, 1);
+            GoalTexture.SetData(new[] { Color.Red });
+
             body = BodyFactory.CreateRectangle(world, width * pixelToUnit, height * pixelToUnit, density);
             body.BodyType = BodyType.Dynamic;
             size = new Vector2(width, height);
@@ -105,13 +110,18 @@ namespace PurpleCorgi
                 body.OnCollision += body_OnCollision;
             else
             {
-                //body2.Position = new Vector2(random.Next(1, GameConstants.MiniGameCanvasWidth) * pixelToUnit, random.Next(1, GameConstants.MiniGameCanvasHeight) * pixelToUnit);
+                body2.Position = new Vector2(random.Next(1, GameConstants.MiniGameCanvasWidth) * pixelToUnit, random.Next(1, GameConstants.MiniGameCanvasHeight) * pixelToUnit);
                 //Console.WriteLine("Score +1");
-                //colliding = false;
+                score++;
+                colliding = false;
+            }
+
+            if (score >= 2 && !lose)
+            {
                 win = true;
             }
 
-            if (winTimer > 10000)
+            if (winTimer > 10000 && !win)
             {
                 lose = true;
 
@@ -137,7 +147,7 @@ namespace PurpleCorgi
             // TODO: Add your drawing code here
 
             sb.Draw(PlainTexture, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale, SpriteEffects.None, 0);
-            sb.Draw(PlainTexture, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
+            sb.Draw(GoalTexture, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
             
             sb.End();
 
