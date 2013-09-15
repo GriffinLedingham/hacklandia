@@ -36,6 +36,7 @@ namespace PurpleCorgi
         public static Texture2D corgi_Sprite;
         public static Texture2D peak_Sprite; 
         public static Texture2D spaceSheet;
+        public static Texture2D tutorialFrames;
 
         public static SpriteFont SegoeUIMono24 = null;
         public static SpriteFont SegoeUIMono72 = null;
@@ -122,6 +123,7 @@ namespace PurpleCorgi
 
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
             corgi_Sprite = Content.Load<Texture2D>("corgi");
+            tutorialFrames = Content.Load<Texture2D>("tutorialFrames");
             SegoeUIMono24 = Content.Load<SpriteFont>("segoe24");
             SegoeUIMono72 = Content.Load<SpriteFont>("segoe72");
 
