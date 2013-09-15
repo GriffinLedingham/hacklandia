@@ -34,6 +34,9 @@ namespace PurpleCorgi
         private float floor_height, floor_width, floor_density, floor_posx, floor_posy;
         private float fixpt_height, fixpt_width, fixpt_density, fixpt_posx, fixpt_posy;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         private Vector2 size, Size, enemy_size, enemy_Size, floor_size, floor_Size;
 
         private bool on_Ground = false;
@@ -114,13 +117,23 @@ namespace PurpleCorgi
             gameState = MiniGameState.Initialized;
         }
 
-        public void Update(GameTime GameTime)
+        public void Update(GameTime gameTime)
         {
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
             }
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
 
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
             Random random = new Random();
             int randomNumber = random.Next(0, 100);
             if (randomNumber > 70 && enemy_body.Position.X < 0)
@@ -163,7 +176,7 @@ namespace PurpleCorgi
            
             body.ApplyForce(force1);
             enemy_body.ApplyForce(new Vector2(-enemyForce, 0));
-            world.Step((float)GameTime.ElapsedGameTime.TotalSeconds);
+            world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public void Render(RenderTarget2D canvas)
@@ -178,7 +191,12 @@ namespace PurpleCorgi
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
             sb.Draw(Game1.corgi_Sprite, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(Game1.corgi_Sprite.Width / 2.0f, Game1.corgi_Sprite.Height / 2.0f), scale, SpriteEffects.None, 0);
             sb.Draw(Game1.WhitePixel, floor_body.Position * unitToPixel, null, Color.White, floor_body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), floor_scale, SpriteEffects.None, 0);
-            sb.Draw(Game1.WhitePixel, enemy_body.Position * unitToPixel, null, Color.Blue, enemy_body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), enemy_scale, SpriteEffects.None, 0);            
+            sb.Draw(Game1.WhitePixel, enemy_body.Position * unitToPixel, null, Color.Blue, enemy_body.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), enemy_scale, SpriteEffects.None, 0);
+
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 300, 300, 300), Color.White);
+            }
             sb.End();
         }
 

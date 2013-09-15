@@ -26,6 +26,9 @@ namespace PurpleCorgi
 
         private MiniGameState gameState;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
@@ -68,7 +71,7 @@ namespace PurpleCorgi
             gameState = MiniGameState.Initialized;
         }
 
-        public void Update(GameTime GameTime)
+        public void Update(GameTime gameTime)
         {
 
             //3 seconds to lift foot
@@ -79,21 +82,31 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
-            
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
 
             
 
             if (!ein.LeftLegRaised && !ein.RightLegRaised || (foot == "right" && !ein.RightLegRaised && ein.LeftLegRaised) || (foot == "left" && ein.RightLegRaised && !ein.LeftLegRaised))
             {
                 holdUpTime = 0.0f;
-                initialTime += GameTime.ElapsedGameTime.Milliseconds;
+                initialTime += gameTime.ElapsedGameTime.Milliseconds;
                 if (footInProgress)
                     lose = true;
             }
             else
             {
                 initialTime = 0.0f;
-                holdUpTime += GameTime.ElapsedGameTime.Milliseconds;
+                holdUpTime += gameTime.ElapsedGameTime.Milliseconds;
                 footInProgress = true;
             }
 
@@ -102,7 +115,7 @@ namespace PurpleCorgi
                 lose = true;
             }
 
-            if (holdUpTime > 10000)
+            if (holdUpTime > 5000)
             {
                 win = true;
             }
@@ -115,7 +128,11 @@ namespace PurpleCorgi
             graphicsDevice.SetRenderTarget(canvas);
             graphicsDevice.Clear(backgroundColor);
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
-            sb.DrawString(Game1.SegoeUIMono24, "Lift " + foot + "for x seconds", new Vector2(100, 100), Color.Red);
+            sb.DrawString(Game1.SegoeUIMono24, "Lift " + foot + "for "+ Math.Ceiling(5-holdUpTime) +" seconds", new Vector2(100, 100), Color.Black);
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle((((int)(tutorialTimer / 300f) % 2) * 300) + 600, 900, 300, 300), Color.White);
+            }
             sb.End();
 
             if (win)

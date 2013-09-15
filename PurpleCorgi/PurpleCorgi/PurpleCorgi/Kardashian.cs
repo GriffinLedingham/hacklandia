@@ -24,6 +24,9 @@ namespace PurpleCorgi
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         World world;
         Texture2D PlainTexture, GoalTexture;
 
@@ -103,7 +106,17 @@ namespace PurpleCorgi
             {
                 gameState = MiniGameState.Running;
             }
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
 
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
             winTimer += gameTime.ElapsedGameTime.Milliseconds;
 
             if (colliding == false)
@@ -144,8 +157,10 @@ namespace PurpleCorgi
             
             sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
-            // TODO: Add your drawing code here
-
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 600, 300, 300), Color.White);
+            }
             sb.Draw(PlainTexture, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale, SpriteEffects.None, 0);
             sb.Draw(GoalTexture, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
             

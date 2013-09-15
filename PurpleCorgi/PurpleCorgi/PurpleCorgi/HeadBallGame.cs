@@ -37,6 +37,9 @@ namespace PurpleCorgi
 
         private Kinect ein;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         private bool win, lost = false;
 
         float winTimer = 0.0f;
@@ -75,7 +78,17 @@ namespace PurpleCorgi
             {
                 gameState = MiniGameState.Running;
             }
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
 
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
             winTimer += gameTime.ElapsedGameTime.Milliseconds;
 
             if (winTimer > 10000)
@@ -137,6 +150,12 @@ namespace PurpleCorgi
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             sb.Draw(Game1.WhitePixel, paddle.Position * unitToPixel, null, Color.Black, paddle.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), paddle_scale, SpriteEffects.None, 0);
             sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Black, ball.Rotation, new Vector2(16) / 2, new Vector2(1), SpriteEffects.None, 0.0f);
+
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 900, 300, 300), Color.White);
+            }
+            
             sb.End();
 
             if (win)

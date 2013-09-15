@@ -34,7 +34,9 @@ namespace PurpleCorgi
         private List<MiniGameContext> miniGames;
 
         public static Texture2D corgi_Sprite;
-        public static Texture2D peak_Sprite; 
+        public static Texture2D peak_Sprite;
+        public static Texture2D hand_closed_sprite;
+        public static Texture2D hand_open_sprite; 
         public static Texture2D spaceSheet;
         public static Texture2D tutorialFrames;
 
@@ -54,7 +56,6 @@ namespace PurpleCorgi
         private const float addFourthMiniGameDuration = 9000f;
         //end running logic
 
-        MiniGameContext g1, g2, g3, g4;
 
         private enum MetaGameState
         {
@@ -131,24 +132,13 @@ namespace PurpleCorgi
 
             miniGames = new List<MiniGameContext>();
 
+            peak_Sprite = Content.Load<Texture2D>("peaktit");
+            hand_closed_sprite = Content.Load<Texture2D>("hand_closed");
+            hand_open_sprite = Content.Load<Texture2D>("hand_open");
+
             g1 = new MiniGameContext();
             g2 = new MiniGameContext();
             g3 = new MiniGameContext();
-            g4 = new MiniGameContext();
-            peak_Sprite = Content.Load<Texture2D>("peaktit");
-
-            g1.game = new FootGame(GraphicsDevice);
-            g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-
-            g2.game = new PlatformerGame(GraphicsDevice);
-            g2.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-
-            g3.game = new TestMiniGame(GraphicsDevice);
-            g3.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-
-            g4.game = new PlatformerGame(GraphicsDevice);
-            g4.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
-
 
         }
 
@@ -164,28 +154,29 @@ namespace PurpleCorgi
 
                 private MiniGame PureRandomMiniGameHelper(){
             
-            switch (GameRandom.Next() % 10) 
+            switch ((new Random()).Next() % 10) 
             {
                 case 0:
-                    return new SpaceGame(GraphicsDevice);
+                    return new TittyTwist(GraphicsDevice);
                 case 1:
-                    return new PaddleMiniGame(GraphicsDevice);
+                    return new PlatformerGame(GraphicsDevice);
                 case 2:
-                    return new PlatformerGame(GraphicsDevice);
+                    return new TittyTwistRight(GraphicsDevice);
                 case 3:
-                    return new PlatformerGame(GraphicsDevice);
-                case 4:
-                    return new PlatformerGame(GraphicsDevice);
-                case 5:
-                    return new PlatformerGame(GraphicsDevice);
-                case 6:
-                    return new PlatformerGame(GraphicsDevice);
-                case 7:
-                    return new PlatformerGame(GraphicsDevice);
-                case 8:
-                    return new PlatformerGame(GraphicsDevice);
-                default:
                     return new PaddleMiniGame(GraphicsDevice);
+                case 4:
+                    return new Kardashian(GraphicsDevice);
+                case 5:
+                    return new BrickMiniGame(GraphicsDevice);
+                case 6:
+                    return new HeadBallGame(GraphicsDevice);
+                case 7:
+                    return new SpaceGame(GraphicsDevice);
+                case 8:
+                    return new ColorGame(GraphicsDevice);
+                default:
+                    return new FootGame(GraphicsDevice);
+
             }
         }
         private int TypeOfGame(MiniGame g) {
@@ -197,14 +188,15 @@ namespace PurpleCorgi
             if(g is BrickMiniGame) return 3;
             if(g is HeadBallGame) return 4;
             if(g is SpaceGame) return 5;
-            if(g is Color) return 2;
-            if(g is PaddleMiniGame) return 2;
+            if(g is ColorGame) return 5;
+            if(g is FootGame) return 6;
 
             return 0;
         }
 
           private MiniGame PureRandomMiniGame()
         {
+
             MiniGame game;
             while(true){
                 game = PureRandomMiniGameHelper();
@@ -276,38 +268,37 @@ namespace PurpleCorgi
                 miniGames = new List<MiniGameContext>();
                 addMiniGameTimer = 0;
                 gameState = MetaGameState.Running;
+                ein.LastColor = null;
                 score = 0;
             }
         }
 
-
+        MiniGameContext g1, g2, g3;
 
         private void UpdateRunning(GameTime gameTime)
         {
             addMiniGameTimer += gameTime.ElapsedGameTime.Milliseconds;
             if (miniGames.Count == 0 && addMiniGameTimer > 0)
             {
-                MiniGameContext g = new MiniGameContext();
-                g.game = PureRandomMiniGame();
-                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                
+                g1.game = PureRandomMiniGame();
+                g1.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
-                miniGames.Add(g);
+                miniGames.Add(g1);
             }
             else if (miniGames.Count == 1 && addMiniGameTimer > addSecondMiniGameDuration && Lobby.Difficulty > 1)
             {
-                MiniGameContext g = new MiniGameContext();
-                g.game = PureRandomMiniGame();
-                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                g2.game = PureRandomMiniGame();
+                g2.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
-                miniGames.Add(g);
+                miniGames.Add(g2);
             }
             else if (miniGames.Count == 2 && addMiniGameTimer > addThirdMiniGameDuration && Lobby.Difficulty > 2)
             {
-                MiniGameContext g = new MiniGameContext();
-                g.game = PureRandomMiniGame();
-                g.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
+                g3.game = PureRandomMiniGame();
+                g3.canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
 
-                miniGames.Add(g);
+                miniGames.Add(g3);
             }
 
             for (int i = 0; i < miniGames.Count; i++)
@@ -321,7 +312,10 @@ namespace PurpleCorgi
                 {
                     score += 100;
 
+                    if (TypeOfGame(me.game) == 5) ein.LastColor = null;
+
                     me.game = PureRandomMiniGame();
+
                 }
                 else if (me.game.GetState() == MiniGameState.Lose)
                 {
@@ -342,7 +336,7 @@ namespace PurpleCorgi
                 Lobby.READY = false;
                 Lobby.Difficulty = 0;
                 Lobby.landingHoverTimer = 0;
-                //score = 0;
+                score = 0;
             }
         }
 

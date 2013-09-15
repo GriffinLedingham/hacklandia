@@ -56,6 +56,10 @@ namespace PurpleCorgi
 
         private int score = 0;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
+
 
         public TittyTwistRight(GraphicsDevice graphicsDevice)
         {
@@ -147,6 +151,18 @@ namespace PurpleCorgi
                 win = true;
             }
 
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
+
 
             if (prizeGet)
             {
@@ -214,6 +230,11 @@ namespace PurpleCorgi
 
             sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
+
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle((((int)(tutorialTimer / 300f) % 2) * 300) + 600, 300, 300, 300), Color.White);
+            }
             // TODO: Add your drawing code here
 
             //sb.Draw(PlainTextureLeft, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale, SpriteEffects.None, 0);

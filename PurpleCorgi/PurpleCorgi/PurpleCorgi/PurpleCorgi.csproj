@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrickMiniGame.cs" />
+    <Compile Include="ColorGame.cs" />
     <Compile Include="TittyTwistRight.cs" />
     <Compile Include="FootGame.cs" />
     <Compile Include="HeadBallGame.cs" />

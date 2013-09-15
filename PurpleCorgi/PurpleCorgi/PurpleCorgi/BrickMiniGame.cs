@@ -40,6 +40,9 @@ namespace PurpleCorgi
         private Texture2D targetTexture;
         private List<Body> targets;
 
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         private Kinect ein;
         public BrickMiniGame(GraphicsDevice graphicsDevice)
         {
@@ -113,6 +116,14 @@ namespace PurpleCorgi
             float x = (float)Math.Cos(theta) * speed;
             float y = (float)-Math.Sin(theta) * speed;
             ball.LinearVelocity = new Vector2(x, y);
+            while (Math.Abs(ball.LinearVelocity.X) < 0.1 && Math.Abs(ball.LinearVelocity.Y) < 0.1)
+            {
+                theta = (float)(Math.PI / 4 + new Random().NextDouble() * Math.PI / 2);
+                x = (float)Math.Cos(theta) * speed;
+                y = (float)-Math.Sin(theta) * speed;
+                ball.LinearVelocity = new Vector2(x, y);
+
+            }
         }
 
         private bool ball_OnCollision(Fixture f1, Fixture f2, Contact contact)
@@ -137,7 +148,23 @@ namespace PurpleCorgi
             }
 
             KeyboardState ks = Keyboard.GetState();
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
 
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
+            }
+
+            if (Math.Abs(ball.LinearVelocity.X) < .5)
+                ball.LinearVelocity = new Vector2(ball.LinearVelocity.X+4,ball.LinearVelocity.Y);
+
+            if (Math.Abs(ball.LinearVelocity.Y) < .5)
+                ball.LinearVelocity = new Vector2(ball.LinearVelocity.X, ball.LinearVelocity.Y+4);
             
             ball.OnCollision +=ball_OnCollision;
             if (ks.IsKeyDown(Keys.Tab))
@@ -193,6 +220,10 @@ namespace PurpleCorgi
                 new Vector2(16, GameConstants.MiniGameCanvasHeight),
                 SpriteEffects.None,
                 0);
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle((((int)(tutorialTimer / 300f) % 2) * 300) + 600, 600, 300, 300), Color.White);
+            }
             sb.Draw(paddleTexture, paddle.Position * unitToPixel, null, Color.Black, paddle.Rotation, new Vector2(paddleRadius), new Vector2(1f), SpriteEffects.None, 0.0f);
             sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Green, ball.Rotation, new Vector2(ballRadius), new Vector2(1f), SpriteEffects.None, 0.0f);
             foreach(Body target in targets){

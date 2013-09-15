@@ -26,6 +26,10 @@ namespace PurpleCorgi
         private List<Color> colors = new List<Color> {Color.Red, Color.Blue, Color.Green, Color.Yellow};
         private int colorIndex = 0;
         private Vector2 renderPosition;
+
+        public static bool ShowedTutorial = false;
+        private float tutorialTimer;
+        private const float tutorialDuration = 1000f;
         public ColorGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -42,6 +46,17 @@ namespace PurpleCorgi
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
+            } 
+            if (!ShowedTutorial)
+            {
+                tutorialTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+                if (tutorialTimer > tutorialDuration)
+                {
+                    ShowedTutorial = true;
+                }
+
+                return;
             }
             string col = ein.LastColor;
             if (!String.IsNullOrEmpty(col))
@@ -94,7 +109,10 @@ namespace PurpleCorgi
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             sb.DrawString(Game1.SegoeUIMono24, ((int)Math.Ceiling((float)time/1000)).ToString(), new Vector2(16), Color.Black);
             sb.DrawString(Game1.SegoeUIMono72, currentColor, renderPosition, renderColor);
-
+            if (!ShowedTutorial)
+            {
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 0, 300, 300), Color.White);
+            }
             sb.End();
         }
 
