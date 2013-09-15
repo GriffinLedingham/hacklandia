@@ -43,6 +43,9 @@ namespace PurpleCorgi
 
         private Kinect ein;
 
+        private bool win = false;
+        private bool lost = false;
+
         private Corgi2 lastForearm = null;
 
 
@@ -128,6 +131,16 @@ namespace PurpleCorgi
                 enemy_body.Position = new Vector2(GameConstants.MiniGameCanvasWidth * pixelToUnit, (floor_posy - 100) * pixelToUnit);
             }
 
+            if (body.Position.X < 0)
+            {
+                lost = true;
+            }
+            else if (body.Position.X > GameConstants.MiniGameCanvasWidth)
+            {
+                win = true;
+            }   
+
+
             body.OnCollision +=body_OnCollision;
             float enemyForce = .3f;
             Vector2 force1 = new Vector2(0, 0);
@@ -179,7 +192,12 @@ namespace PurpleCorgi
 
         public MiniGameState GetState()
         {
-            return gameState;
+            if (win)
+                return MiniGameState.Win;
+            else if (lost)
+                return MiniGameState.Lose;
+            else
+                return MiniGameState.Running;
         }
     }
 }

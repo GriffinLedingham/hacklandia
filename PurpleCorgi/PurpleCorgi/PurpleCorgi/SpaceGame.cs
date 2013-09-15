@@ -31,6 +31,8 @@ namespace PurpleCorgi
         private float pushAlienTimer;
         private float timeBetweenNewAliens = 3000f;
 
+        public int killCount;
+
         private class Particle
         {
             public Vector2 position;
@@ -156,6 +158,11 @@ namespace PurpleCorgi
                 timePassed += currentTime.ElapsedGameTime.Milliseconds;
 
                 position += new Vector2((float)Math.Cos(targetAngle), (float)Math.Sin(targetAngle)) * alienVelocity;
+
+                if (Vector2.Distance(parent.playerPosition, position) < 4.0f)
+                {
+                    parent.gameState = MiniGameState.Lose;
+                }
             }
 
             public void Draw(SpriteBatch sb)
@@ -171,12 +178,14 @@ namespace PurpleCorgi
             public Alien target;
             public float timePassed;
             public bool dead = false;
+            public SpaceGame parent;
 
-            public PlayerBullet(Vector2 position, Alien target)
+            public PlayerBullet(Vector2 position, Alien target, SpaceGame parent)
             {
                 this.position = position;
                 this.target = target;
                 timePassed = Game1.GameRandom.Next() % 1000;
+                this.parent = parent;
             }
 
             public void Update(GameTime currentTime)
@@ -189,6 +198,7 @@ namespace PurpleCorgi
 
                 if (Vector2.Distance(position, target.position) < 0.4f)
                 {
+                    parent.killCount++;
                     target.dead = true;
                     dead = true;
                 }
@@ -211,6 +221,8 @@ namespace PurpleCorgi
             sb = new SpriteBatch(graphicsDevice);
 
             pushAlienTimer = 0;
+
+            killCount = 0;
 
             stars = new Star[100];
             for (int i = 0; i < 100; i++)
@@ -260,6 +272,11 @@ namespace PurpleCorgi
                 aliens.Add(new Alien(this));
             }
 
+            if (killCount >= 10)
+            {
+                gameState = MiniGameState.Win;
+            }
+
             {
                 string lastColor = ein.LastColor;
 
@@ -285,7 +302,7 @@ namespace PurpleCorgi
                         {
                             if (al.color == winColor)
                             {
-                                bullets.Add(new PlayerBullet(playerPosition, al));
+                                bullets.Add(new PlayerBullet(playerPosition, al, this));
 
                                 playerAngle = (float)(Math.Atan2(al.position.Y - playerPosition.Y, al.position.X - playerPosition.X));
 

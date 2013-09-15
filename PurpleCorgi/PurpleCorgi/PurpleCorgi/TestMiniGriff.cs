@@ -34,8 +34,6 @@ namespace PurpleCorgi
 
         private Vector2 size, Size, rod_size, rod_Size, rodtray_size, rodtray_Size;
 
-
-
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
 

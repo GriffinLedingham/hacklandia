@@ -21,7 +21,7 @@ namespace PurpleCorgi
 
         private float paddle_width = 256;
         private float paddle_height = 16;
-        private float ball_radius = 20;
+        private float ball_radius = 8;
 
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
@@ -37,6 +37,10 @@ namespace PurpleCorgi
 
         private Kinect ein;
 
+        private bool win, lost = false;
+
+        float winTimer = 0.0f;
+
         public HeadBallGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -46,7 +50,7 @@ namespace PurpleCorgi
             ein = new Kinect(100, 100);
             ein.Init();
 
-            circleTexture = CreateCircle(20, graphicsDevice);
+            circleTexture = CreateCircle(8, graphicsDevice);
 
             gameState = MiniGameState.Initialized;
 
@@ -70,6 +74,18 @@ namespace PurpleCorgi
             if (gameState == MiniGameState.Initialized)
             {
                 gameState = MiniGameState.Running;
+            }
+
+            winTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+            if (winTimer > 10000)
+            {
+                win = true;
+            }
+
+            if (ball.Position.Y*unitToPixel > GameConstants.MiniGameCanvasHeight)
+            {
+                lost = true;
             }
 
             KeyboardState ks = Keyboard.GetState();
@@ -122,11 +138,22 @@ namespace PurpleCorgi
             sb.Draw(Game1.WhitePixel, paddle.Position * unitToPixel, null, Color.Black, paddle.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), paddle_scale, SpriteEffects.None, 0);
             sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Black, ball.Rotation, new Vector2(16) / 2, new Vector2(1), SpriteEffects.None, 0.0f);
             sb.End();
+
+            if (win)
+                graphicsDevice.Clear(Color.Red);
+
+            if (lost)
+                graphicsDevice.Clear(Color.Black);
         }
 
         public MiniGameState GetState()
         {
-            return gameState;
+            if (win)
+                return MiniGameState.Win;
+            else if (lost)
+                return MiniGameState.Lose;
+            else
+                return MiniGameState.Running;
         }
 
         public Texture2D CreateCircle(int radius, GraphicsDevice gd)
