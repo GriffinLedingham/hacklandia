@@ -19,7 +19,7 @@ namespace PurpleCorgi
         private GraphicsDevice graphicsDevice;
         private SpriteBatch sb;
 
-        Body body;
+        Body body, body2;
 
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
@@ -27,10 +27,12 @@ namespace PurpleCorgi
         World world;
         Texture2D PlainTexture;
 
-        Vector2 Size, size;
+        Vector2 Size, size, Size2, size2;
 
+        bool win, lose = false;
 
         float height, width, density, posx, posy;
+        float height2, width2, density2, posx2, posy2;
 
         float gravity;
 
@@ -38,11 +40,19 @@ namespace PurpleCorgi
 
         private MiniGameState gameState;
 
+        private Random random;
+
+        float winTimer = 0.0f;
+
+        private bool colliding = false;
+
         public Kardashian(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
             sb = new SpriteBatch(graphicsDevice);
+
+            random = new Random();
 
             ein = new Kinect(100, 100);
             ein.Init();
@@ -52,6 +62,12 @@ namespace PurpleCorgi
             density = 1f;
             posx = 200;
             posy = 50;
+
+            height2 = 50;
+            width2 = 50;
+            density2 = 1f;
+            posx2 = 200;
+            posy2 = 200;
 
             gravity = 0f;
 
@@ -66,6 +82,14 @@ namespace PurpleCorgi
             size = new Vector2(width, height);
             Size = size;
             body.Position = new Vector2(posx * pixelToUnit, posy * pixelToUnit);
+            body.SleepingAllowed = false;
+
+            body2 = BodyFactory.CreateRectangle(world, width2 * pixelToUnit, height2 * pixelToUnit, density2);
+            body2.BodyType = BodyType.Dynamic;
+            size2 = new Vector2(width2, height2);
+            Size2 = size2;
+            body2.Position = new Vector2(random.Next(1, GameConstants.MiniGameCanvasWidth) * pixelToUnit, random.Next(1, GameConstants.MiniGameCanvasHeight) * pixelToUnit);
+            body2.SleepingAllowed = false;
         }
 
         public void Update(GameTime gameTime)
@@ -75,25 +99,26 @@ namespace PurpleCorgi
                 gameState = MiniGameState.Running;
             }
 
-            /*if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.W))
-                body.Position += new Vector2(0,.1f);
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A))
-                body.Position += new Vector2(.1f, 0);
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S))
-                body.Position -= new Vector2(0, .1f);
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D))
-                body.Position -= new Vector2(.1f, 0);*/
+            winTimer += gameTime.ElapsedGameTime.Milliseconds;
 
+            if (colliding == false)
+                body.OnCollision += body_OnCollision;
+            else
+            {
+                //body2.Position = new Vector2(random.Next(1, GameConstants.MiniGameCanvasWidth) * pixelToUnit, random.Next(1, GameConstants.MiniGameCanvasHeight) * pixelToUnit);
+                //Console.WriteLine("Score +1");
+                //colliding = false;
+                win = true;
+            }
 
+            if (winTimer > 10000)
+            {
+                lose = true;
 
+            }
 
-            //paddle.Rotation -= (ein.RightHandAngle)/50.0f;
-
-            //paddle.Rotation = -ein.RightHandAngle;
             body.Position = new Vector2((((ein.UserX / .5f) * GameConstants.MiniGameCanvasWidth / 2) + GameConstants.MiniGameCanvasWidth/2) * pixelToUnit, 
                 (((ein.UserZ -.9f) * GameConstants.MiniGameCanvasHeight / 2)) * pixelToUnit);
-
-            Console.WriteLine(ein.UserZ);
 
             // Simulate physics.
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -105,21 +130,46 @@ namespace PurpleCorgi
             graphicsDevice.Clear(Color.CornflowerBlue);
 
             Vector2 scale = new Vector2(Size.X / (float)PlainTexture.Width, Size.Y / (float)PlainTexture.Height);
+            Vector2 scale2 = new Vector2(Size2.X / (float)PlainTexture.Width, Size2.Y / (float)PlainTexture.Height);
             
             sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             // TODO: Add your drawing code here
 
             sb.Draw(PlainTexture, body.Position * unitToPixel, null, Color.White, body.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale, SpriteEffects.None, 0);
+            sb.Draw(PlainTexture, body2.Position * unitToPixel, null, Color.White, body2.Rotation, new Vector2(PlainTexture.Width / 2.0f, PlainTexture.Height / 2.0f), scale2, SpriteEffects.None, 0);
             
             sb.End();
 
+            if (win)
+            {
+                graphicsDevice.Clear(Color.Red);
+                winTimer = 0.0f;
+            }
 
+            if (lose)
+            {
+                graphicsDevice.Clear(Color.Black);
+            }
+        }
+
+        private bool body_OnCollision(Fixture f1, Fixture f2, Contact contact)
+        {
+            if (f1.Body == body && f2.Body == body2 && colliding == false)
+            {
+                colliding = true;
+            }
+            return true;
         }
 
         public MiniGameState GetState()
         {
-            return gameState;
+            if (win)
+                return MiniGameState.Win;
+            else if (lose)
+                return MiniGameState.Lose;
+            else
+                return MiniGameState.Running;
         }
 
        

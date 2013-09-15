@@ -35,7 +35,8 @@ namespace PurpleCorgi
         private RenderTarget2D testMiniGameCanvas;
         private MiniGame testMiniGame;
 
-        public static Texture2D corgi_Sprite; 
+        public static Texture2D corgi_Sprite;
+        public static Texture2D peak_Sprite; 
         public static Texture2D spaceSheet;
 
         private class MiniGameContext
@@ -51,7 +52,7 @@ namespace PurpleCorgi
             graphics.PreferredBackBufferWidth = GameConstants.GameResolutionWidth;
             graphics.PreferredBackBufferHeight = GameConstants.GameResolutionHeight;
 
-            graphics.ToggleFullScreen();
+            //graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
         }
 
@@ -84,6 +85,7 @@ namespace PurpleCorgi
             spaceSheet = Content.Load<Texture2D>("spaceSheet");
 
             corgi_Sprite = Content.Load<Texture2D>("corgi");
+            peak_Sprite = Content.Load<Texture2D>("peaktit");
 
             miniGames = new MiniGameContext[4];
             for (int i = 0; i < 4; i++)
@@ -97,13 +99,13 @@ namespace PurpleCorgi
                 else if (i == 1)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new PlatformerGame(GraphicsDevice);
+                    miniGames[i].game = new HeadBallGame(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else if (i == 2)
                 {
                     miniGames[i] = new MiniGameContext();
-                    miniGames[i].game = new SpaceGame(GraphicsDevice);
+                    miniGames[i].game = new TittyTwistRight(GraphicsDevice);
                     miniGames[i].canvas = new RenderTarget2D(GraphicsDevice, GameConstants.MiniGameCanvasWidth, GameConstants.MiniGameCanvasHeight);
                 }
                 else if (i == 3)

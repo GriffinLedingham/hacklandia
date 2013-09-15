@@ -82,7 +82,7 @@ namespace PurpleCorgi
                 win = true;
             }
 
-            if (ball.Position.Y > GameConstants.MiniGameCanvasHeight)
+            if (ball.Position.Y * unitToPixel > GameConstants.MiniGameCanvasHeight)
             {
                 lost = true;
             }
@@ -137,6 +137,12 @@ namespace PurpleCorgi
             sb.Draw(Game1.WhitePixel, paddle.Position * unitToPixel, null, Color.Black, paddle.Rotation, new Vector2(Game1.WhitePixel.Width / 2.0f, Game1.WhitePixel.Height / 2.0f), paddle_scale, SpriteEffects.None, 0);
             sb.Draw(circleTexture, ball.Position * unitToPixel, null, Color.Green, ball.Rotation, new Vector2(16) / 2, new Vector2(1), SpriteEffects.None, 0.0f);
             sb.End();
+
+            if (win)
+                graphicsDevice.Clear(Color.Red);
+
+            if (lost)
+                graphicsDevice.Clear(Color.Black);
         }
 
         public MiniGameState GetState()
