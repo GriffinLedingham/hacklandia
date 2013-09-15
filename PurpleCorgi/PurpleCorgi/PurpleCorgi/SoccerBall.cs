@@ -37,6 +37,11 @@ namespace PurpleCorgi
 
         private Kinect ein;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
+
         public SoccerGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;

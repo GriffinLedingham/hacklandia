@@ -26,7 +26,7 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         World world;
         Texture2D PlainTexture, GoalTexture;
 
@@ -51,6 +51,10 @@ namespace PurpleCorgi
 
         private bool colliding = false;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         public Kardashian(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;

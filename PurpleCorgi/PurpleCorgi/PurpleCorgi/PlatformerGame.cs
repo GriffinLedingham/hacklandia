@@ -30,13 +30,17 @@ namespace PurpleCorgi
         private float gravity;
         private float height, width, density, posx, posy;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         private float enemy_height, enemy_width, enemy_density, enemy_posx, enemy_posy;
         private float floor_height, floor_width, floor_density, floor_posx, floor_posy;
         private float fixpt_height, fixpt_width, fixpt_density, fixpt_posx, fixpt_posy;
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         private Vector2 size, Size, enemy_size, enemy_Size, floor_size, floor_Size;
 
         private bool on_Ground = false;

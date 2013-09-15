@@ -36,6 +36,9 @@ namespace PurpleCorgi
 
     interface MiniGame
     {
+
+        void Nuke();
+
         /// <summary>
         /// Update the MiniGame for one frame
         /// </summary>

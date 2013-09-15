@@ -51,9 +51,9 @@ namespace PurpleCorgi
 
         // running logic
         private float addMiniGameTimer;
-        private const float addSecondMiniGameDuration = 3000f;
-        private const float addThirdMiniGameDuration = 6000f;
-        private const float addFourthMiniGameDuration = 9000f;
+        private const float addSecondMiniGameDuration = 20000f;
+        private const float addThirdMiniGameDuration = 40000f;
+        private const float addFourthMiniGameDuration = 9000000000000000000f;
         //end running logic
 
 
@@ -154,7 +154,7 @@ namespace PurpleCorgi
 
                 private MiniGame PureRandomMiniGameHelper(){
             
-            switch ((new Random()).Next() % 10) 
+            switch ((new Random()).Next() % 9) 
             {
                 case 0:
                     return new TittyTwist(GraphicsDevice);
@@ -172,10 +172,9 @@ namespace PurpleCorgi
                     return new HeadBallGame(GraphicsDevice);
                 case 7:
                     return new SpaceGame(GraphicsDevice);
-                case 8:
-                    return new ColorGame(GraphicsDevice);
                 default:
-                    return new FootGame(GraphicsDevice);
+                    return new ColorGame(GraphicsDevice);
+               
 
             }
         }
@@ -201,6 +200,7 @@ namespace PurpleCorgi
             while(true){
                 game = PureRandomMiniGameHelper();
                 int type = TypeOfGame(game);
+                if (type != 5) continue; 
                 bool conflict = false;
                 foreach(MiniGameContext m in miniGames){
                     if(type == TypeOfGame(m.game)){
@@ -316,6 +316,7 @@ namespace PurpleCorgi
 
                     me.game = PureRandomMiniGame();
 
+
                 }
                 else if (me.game.GetState() == MiniGameState.Lose)
                 {
@@ -332,6 +333,12 @@ namespace PurpleCorgi
             if (Rectangle.Intersect(Lobby.LosePointer, Lobby.LoseLanding).Height > 0)
             {
                 gameState = MetaGameState.Init;
+
+                foreach (MiniGameContext me in miniGames)
+                {
+                    me.game = null;
+                }
+              
                 miniGames.Clear();
                 Lobby.READY = false;
                 Lobby.Difficulty = 0;

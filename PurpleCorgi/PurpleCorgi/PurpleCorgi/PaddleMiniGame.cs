@@ -41,9 +41,13 @@ namespace PurpleCorgi
 
         private bool win, lost = false;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
 
         public PaddleMiniGame(GraphicsDevice graphicsDevice)
         {

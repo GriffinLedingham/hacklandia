@@ -56,10 +56,14 @@ namespace PurpleCorgi
 
         private int score = 0;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
 
         public TittyTwist(GraphicsDevice graphicsDevice)
         {

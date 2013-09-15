@@ -61,7 +61,10 @@ namespace PurpleCorgi
                     Difficulty = 3;
                 }
         }
-
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         public void Render(RenderTarget2D canvas)
         {
             graphicsDevice.SetRenderTarget(canvas);

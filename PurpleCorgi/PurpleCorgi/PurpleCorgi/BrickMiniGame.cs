@@ -42,8 +42,13 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         private Kinect ein;
+
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         public BrickMiniGame(GraphicsDevice graphicsDevice)
         {
             targets = new List<Body>();
@@ -72,7 +77,7 @@ namespace PurpleCorgi
                 targets.Add(body);
             }
             paddle = BodyFactory.CreateCircle(physicsWorld, paddleRadius * pixelToUnit, 1000f);
-            paddle.BodyType = BodyType.Static;
+            paddle.BodyType = BodyType.Dynamic;
             paddle.Position = new Vector2(GameConstants.MiniGameCanvasWidth / 2 * pixelToUnit, (GameConstants.MiniGameCanvasHeight+20) * pixelToUnit);
             paddle.SleepingAllowed = false;
             paddle.Restitution = 1.0f;

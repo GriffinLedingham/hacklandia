@@ -33,9 +33,15 @@ namespace PurpleCorgi
 
         public int killCount;
 
+
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
+
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         private class Particle
         {
             public Vector2 position;
@@ -391,7 +397,7 @@ namespace PurpleCorgi
             sb.Draw(Game1.spaceSheet, playerPosition, new Rectangle(0, 0, 16, 16), Color.White, playerAngle, new Vector2(8), 2.0f, SpriteEffects.None, 0.0f);
             if (!ShowedTutorial)
             {
-                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 0, 300, 300), Color.White);
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle((((int)(tutorialTimer / 300f) % 2) * 300) + 600, 1200, 300, 300), Color.White);
             }
             foreach (Alien ae in aliens)
             {

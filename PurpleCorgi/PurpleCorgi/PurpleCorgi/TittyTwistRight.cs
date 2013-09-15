@@ -58,8 +58,12 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
 
         public TittyTwistRight(GraphicsDevice graphicsDevice)
         {

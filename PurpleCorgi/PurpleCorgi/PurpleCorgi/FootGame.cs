@@ -28,7 +28,7 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         
         const float unitToPixel = 100.0f;
         const float pixelToUnit = 1 / unitToPixel;
@@ -45,6 +45,11 @@ namespace PurpleCorgi
         bool win, lose = false;
 
         Random random;
+
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
 
         public FootGame(GraphicsDevice graphicsDevice)
         {

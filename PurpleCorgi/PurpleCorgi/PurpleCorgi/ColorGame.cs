@@ -29,7 +29,7 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         public ColorGame(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -40,6 +40,10 @@ namespace PurpleCorgi
             resetDisplay();
         }
 
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
 
         public void Update(GameTime gameTime)
         {
@@ -66,7 +70,7 @@ namespace PurpleCorgi
                 {
                     correct++;
                     resetDisplay();
-                    if (correct == 15)
+                    if (correct == 5)
                     {
                         win = true;
                         ein.LastColor = string.Empty;
@@ -99,7 +103,14 @@ namespace PurpleCorgi
             renderColor = colors[colorIndex];
             bgColor = colors[bgIndex];
             renderPosition = new Vector2(rand.Next(64, 400), rand.Next(64, 260));
-            time = 4000;
+            if (ShowedTutorial)
+            {
+                time = 4000;
+            }
+            else
+            {
+                time = 8000;
+            }
         }
         public void Render(RenderTarget2D canvas)
         {
@@ -111,7 +122,7 @@ namespace PurpleCorgi
             sb.DrawString(Game1.SegoeUIMono72, currentColor, renderPosition, renderColor);
             if (!ShowedTutorial)
             {
-                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 0, 300, 300), Color.White);
+                sb.Draw(Game1.tutorialFrames, new Vector2(40, 10), new Rectangle(((int)(tutorialTimer / 300f) % 2) * 300, 1200, 300, 300), Color.White);
             }
             sb.End();
         }

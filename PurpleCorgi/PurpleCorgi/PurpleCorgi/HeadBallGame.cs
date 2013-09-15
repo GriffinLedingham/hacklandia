@@ -39,9 +39,12 @@ namespace PurpleCorgi
 
         public static bool ShowedTutorial = false;
         private float tutorialTimer;
-        private const float tutorialDuration = 1000f;
+        private const float tutorialDuration = 3000f;
         private bool win, lost = false;
-
+        public void Nuke()
+        {
+            ein.Nuke();
+        }
         float winTimer = 0.0f;
 
         public HeadBallGame(GraphicsDevice graphicsDevice)
@@ -58,6 +61,7 @@ namespace PurpleCorgi
             gameState = MiniGameState.Initialized;
 
             physicsWorld = new World(new Vector2(0, 0.8f));
+            
 
             paddle = BodyFactory.CreateRectangle(physicsWorld, paddle_width * pixelToUnit, paddle_height * pixelToUnit, 1000f);
             paddle.BodyType = BodyType.Static;
